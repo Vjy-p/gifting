@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width,initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: #000;
+    }
+  </style>
+</head>
+<body>
+<!-- STITCH_SVG_START:ANIMATION_22 class="fixed inset-0 w-full h-full" --><div class="fixed inset-0 w-full h-full" id="animated-svg-ANIMATION_22" style="display:block;"><svg class="w-full h-full drop-shadow-md" height="100%" viewbox="0 0 400 400" width="100%" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<!-- Background Soft Glow -->
+<radialgradient cx="50%" cy="50%" id="haloGlow" r="50%">
+<stop offset="0%" stop-color="#245c45" stop-opacity="0.18"></stop>
+<stop offset="60%" stop-color="#3b7a5e" stop-opacity="0.06"></stop>
+<stop offset="100%" stop-color="#faf9f5" stop-opacity="0"></stop>
+</radialgradient>
+<!-- Metallic Gold Foil Gradient -->
+<lineargradient id="goldRibbon" x1="0%" x2="100%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#d4af37"></stop>
+<stop offset="35%" stop-color="#fdf6c7"></stop>
+<stop offset="65%" stop-color="#c59b27"></stop>
+<stop offset="100%" stop-color="#9a7818"></stop>
+</lineargradient>
+<!-- Deep Emerald Box Gradient -->
+<lineargradient id="emeraldLid" x1="0%" x2="100%" y1="0%" y2="80%">
+<stop offset="0%" stop-color="#2d6a50"></stop>
+<stop offset="50%" stop-color="#245c45"></stop>
+<stop offset="100%" stop-color="#183e2e"></stop>
+</lineargradient>
+<lineargradient id="emeraldBase" x1="0%" x2="0%" y1="0%" y2="100%">
+<stop offset="0%" stop-color="#1f503c"></stop>
+<stop offset="100%" stop-color="#133326"></stop>
+</lineargradient>
+<!-- Sparkle filter -->
+<filter height="140%" id="softGlow" width="140%" x="-20%" y="-20%">
+<fegaussianblur result="blur" stddeviation="3"></fegaussianblur>
+<fecomposite in="SourceGraphic" in2="blur" operator="over"></fecomposite>
+</filter>
+<style>
+      /* Ambient Floating Box */
+      @keyframes floatBox {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-8px) rotate(-0.5deg); }
+      }
+
+      /* Pulsing Halo Glow */
+      @keyframes pulseGlow {
+        0%, 100% { transform: scale(0.92); opacity: 0.6; }
+        50% { transform: scale(1.12); opacity: 1; }
+      }
+
+      /* Rotating Sacred Geometry / Seal Orbit */
+      @keyframes slowRotate {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+
+      @keyframes counterRotate {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+      }
+
+      /* Ribbon Shimmer */
+      @keyframes ribbonShimmer {
+        0%, 100% { filter: drop-shadow(0 0 2px rgba(212,175,55,0.4)); }
+        50% { filter: drop-shadow(0 0 8px rgba(253,246,199,0.9)); }
+      }
+
+      /* Sparkling Starlight particles */
+      @keyframes twinkleA {
+        0%, 100% { transform: scale(0.2) rotate(0deg); opacity: 0; }
+        50% { transform: scale(1) rotate(45deg); opacity: 0.95; }
+      }
+
+      @keyframes twinkleB {
+        0%, 100% { transform: scale(0.3) rotate(20deg); opacity: 0.1; }
+        60% { transform: scale(1.15) rotate(70deg); opacity: 1; }
+      }
+
+      /* Botanical Leaf Subtle Sway */
+      @keyframes leafSwayLeft {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(-5deg); }
+      }
+
+      @keyframes leafSwayRight {
+        0%, 100% { transform: rotate(0deg); }
+        50% { transform: rotate(6deg); }
+      }
+
+      /* Checkmark Seal Draw-in & Glow */
+      @keyframes sealStamp {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.04); }
+      }
+
+      .floating-group {
+        animation: floatBox 5s ease-in-out infinite;
+        transform-origin: 200px 220px;
+      }
+
+      .ambient-glow {
+        animation: pulseGlow 4s ease-in-out infinite;
+        transform-origin: 200px 200px;
+      }
+
+      .orbit-ring-outer {
+        animation: slowRotate 24s linear infinite;
+        transform-origin: 200px 200px;
+      }
+
+      .orbit-ring-inner {
+        animation: counterRotate 18s linear infinite;
+        transform-origin: 200px 200px;
+      }
+
+      .gold-ribbon-shine {
+        animation: ribbonShimmer 3s ease-in-out infinite;
+      }
+
+      .sparkle-1 {
+        animation: twinkleA 2.8s ease-in-out infinite;
+        transform-origin: 90px 110px;
+      }
+
+      .sparkle-2 {
+        animation: twinkleB 3.2s ease-in-out infinite 0.7s;
+        transform-origin: 310px 120px;
+      }
+
+      .sparkle-3 {
+        animation: twinkleA 2.6s ease-in-out infinite 1.4s;
+        transform-origin: 325px 270px;
+      }
+
+      .sparkle-4 {
+        animation: twinkleB 3.5s ease-in-out infinite 2s;
+        transform-origin: 75px 260px;
+      }
+
+      .leaf-left {
+        transform-origin: 200px 85px;
+        animation: leafSwayLeft 4.5s ease-in-out infinite;
+      }
+
+      .leaf-right {
+        transform-origin: 200px 85px;
+        animation: leafSwayRight 4.5s ease-in-out infinite;
+      }
+
+      .wax-seal {
+        animation: sealStamp 3.5s ease-in-out infinite;
+        transform-origin: 200px 200px;
+      }
+    </style>
+</defs>
+<!-- Ambient Radiance Background -->
+<circle class="ambient-glow" cx="200" cy="200" fill="url(#haloGlow)" r="170"></circle>
+<!-- Outer Orbiting Botanical / Delicate Ring -->
+<g class="orbit-ring-outer">
+<circle cx="200" cy="200" fill="none" r="150" stroke="#245c45" stroke-dasharray="4 8" stroke-opacity="0.12" stroke-width="1.2"></circle>
+<circle cx="200" cy="50" fill="#d4af37" opacity="0.6" r="3.5"></circle>
+<circle cx="350" cy="200" fill="#245c45" opacity="0.4" r="3"></circle>
+<circle cx="200" cy="350" fill="#d4af37" opacity="0.6" r="3.5"></circle>
+<circle cx="50" cy="200" fill="#245c45" opacity="0.4" r="3"></circle>
+</g>
+<!-- Inner Delicate Sacred Geometry Orbit -->
+<g class="orbit-ring-inner">
+<circle cx="200" cy="200" fill="none" r="130" stroke="#d4af37" stroke-dasharray="14 10 2 10" stroke-opacity="0.22" stroke-width="1"></circle>
+<polygon fill="#d4af37" opacity="0.7" points="200,72 204,78 200,84 196,78"></polygon>
+<polygon fill="#d4af37" opacity="0.7" points="328,200 322,204 316,200 322,196"></polygon>
+<polygon fill="#d4af37" opacity="0.7" points="200,328 196,322 200,316 204,322"></polygon>
+<polygon fill="#d4af37" opacity="0.7" points="72,200 78,196 84,200 78,204"></polygon>
+</g>
+<!-- Shadow below gift box -->
+<ellipse cx="200" cy="305" fill="#133326" opacity="0.14" rx="85" ry="12"></ellipse>
+<!-- Floating Gift Box & Presentation Group -->
+<g class="floating-group">
+<!-- Box Body (Perspective Base) -->
+<rect fill="url(#emeraldBase)" height="95" rx="10" stroke="#183e2e" stroke-width="1.5" width="160" x="120" y="195"></rect>
+<!-- Box Vertical Gold Ribbon Bottom -->
+<rect class="gold-ribbon-shine" fill="url(#goldRibbon)" height="95" width="24" x="188" y="195"></rect>
+<!-- Box Lid with Overhang & Shadow -->
+<rect fill="url(#emeraldLid)" filter="drop-shadow(0 8px 12px rgba(19,51,38,0.35))" height="46" rx="8" stroke="#2d6a50" stroke-width="1.5" width="180" x="110" y="152"></rect>
+<!-- Lid Vertical Gold Ribbon -->
+<rect class="gold-ribbon-shine" fill="url(#goldRibbon)" height="46" width="24" x="188" y="152"></rect>
+<!-- Fine Gold Rim Line on Box Lid -->
+<line opacity="0.55" stroke="#d4af37" stroke-width="1.2" x1="114" x2="286" y1="194" y2="194"></line>
+<!-- Luxurious Gold Bow & Ribbon Tails -->
+<!-- Left Loop -->
+<path d="M 194 154 C 170 120 135 130 152 152 C 166 166 188 158 196 156 Z" fill="url(#goldRibbon)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"></path>
+<!-- Right Loop -->
+<path d="M 206 154 C 230 120 265 130 248 152 C 234 166 212 158 204 156 Z" fill="url(#goldRibbon)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.25))"></path>
+<!-- Ribbon Tails Flowing Down -->
+<path d="M 193 158 Q 180 185 168 205 Q 174 205 182 201 Q 192 185 198 162 Z" fill="url(#goldRibbon)" opacity="0.9"></path>
+<path d="M 207 158 Q 220 185 232 205 Q 226 205 218 201 Q 208 185 202 162 Z" fill="url(#goldRibbon)" opacity="0.9"></path>
+<!-- Central Knot -->
+<circle cx="200" cy="155" fill="url(#goldRibbon)" filter="drop-shadow(0 2px 4px rgba(0,0,0,0.3))" r="9" stroke="#9a7818" stroke-width="1"></circle>
+<!-- Embossed Central Artisan Wax Seal / Monogram Emblem -->
+<g class="wax-seal">
+<circle cx="200" cy="235" fill="#faf9f5" filter="drop-shadow(0 4px 8px rgba(0,0,0,0.25))" r="24" stroke="#d4af37" stroke-width="2"></circle>
+<circle cx="200" cy="235" fill="none" r="21" stroke="#245c45" stroke-dasharray="2 2" stroke-width="1"></circle>
+<!-- Monogram 'TG' and Heritage Sprig -->
+<path d="M 190 231 H 210 M 200 231 V 243 M 195 243 H 205" stroke="#245c45" stroke-linecap="round" stroke-width="1.8"></path>
+<!-- Small Checked Sparkle inside seal -->
+<path d="M 194 235 L 198 239 L 206 229" fill="none" stroke="#245c45" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2"></path>
+</g>
+<!-- Botanical Leaves Sprouting from Ribbon (Tribe Green Motif) -->
+<g class="leaf-left">
+<path d="M 194 146 C 180 130 172 110 186 102 C 196 114 196 136 194 146 Z" fill="#3b7a5e" opacity="0.9"></path>
+<path d="M 194 146 Q 188 126 186 104" fill="none" opacity="0.6" stroke="#d4af37" stroke-width="0.8"></path>
+</g>
+<g class="leaf-right">
+<path d="M 206 146 C 220 130 228 110 214 102 C 204 114 204 136 206 146 Z" fill="#2d6a50" opacity="0.9"></path>
+<path d="M 206 146 Q 212 126 214 104" fill="none" opacity="0.6" stroke="#d4af37" stroke-width="0.8"></path>
+</g>
+</g>
+<!-- Four-Pointed Craft Twinkle Stars -->
+<!-- Sparkle 1 (Top Left) -->
+<g class="sparkle-1">
+<path d="M 90 95 Q 90 110 75 110 Q 90 110 90 125 Q 90 110 105 110 Q 90 110 90 95 Z" fill="#d4af37" filter="url(#softGlow)"></path>
+<circle cx="90" cy="110" fill="#ffffff" r="1.5"></circle>
+</g>
+<!-- Sparkle 2 (Top Right) -->
+<g class="sparkle-2">
+<path d="M 310 105 Q 310 120 295 120 Q 310 120 310 135 Q 310 120 325 120 Q 310 120 310 105 Z" fill="#d4af37" filter="url(#softGlow)"></path>
+<circle cx="310" cy="120" fill="#ffffff" r="1.5"></circle>
+</g>
+<!-- Sparkle 3 (Bottom Right) -->
+<g class="sparkle-3">
+<path d="M 325 258 Q 325 270 313 270 Q 325 270 325 282 Q 325 270 337 270 Q 325 270 325 258 Z" fill="#3b7a5e" filter="url(#softGlow)"></path>
+</g>
+<!-- Sparkle 4 (Bottom Left) -->
+<g class="sparkle-4">
+<path d="M 75 250 Q 75 260 65 260 Q 75 260 75 270 Q 75 260 85 260 Q 75 260 75 250 Z" fill="#d4af37" filter="url(#softGlow)"></path>
+</g>
+</svg></div><!-- STITCH_SVG_END:ANIMATION_22 -->
+</body>
+</html>
