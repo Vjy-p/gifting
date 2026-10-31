@@ -10,24 +10,25 @@ class FooterWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(32),
-      color: AppColors.darkGreen,
+      //  color: Theme.of(context).colorScheme.,
+      color: AppColors.footerBackground,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             'TRIBE GREEN',
             style: TextStyle(
-              color: AppColors.background,
+              color: AppColors.lightBackground,
               fontSize: isMobile ? 16 : 20,
               fontWeight: FontWeight.w700,
               letterSpacing: 1.5,
             ),
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             'Thoughtful gifting for modern businesses.',
             style: TextStyle(
-              color: AppColors.sage,
+              color: AppColors.lightSage,
               fontSize: isMobile ? 12 : 14,
               letterSpacing: 0.2,
             ),
@@ -38,7 +39,7 @@ class FooterWidget extends StatelessWidget {
           Text(
             'Corporate gifting • Custom branding • Bulk orders',
             style: TextStyle(
-              color: AppColors.sage,
+              color: AppColors.lightSage,
               fontSize: isMobile ? 12 : 14,
             ),
           ),

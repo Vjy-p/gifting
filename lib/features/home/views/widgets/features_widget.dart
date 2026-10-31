@@ -15,8 +15,9 @@ class FeaturesWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 26),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        // color: AppColors.surface,
         border: Border.symmetric(
           horizontal: BorderSide(color: AppColors.border),
         ),
@@ -33,7 +34,7 @@ class FeaturesWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Text(
                 item.$2,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w600,
                   color: AppColors.text,
                 ),

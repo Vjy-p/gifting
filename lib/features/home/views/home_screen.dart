@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/features/enquiries/views/enquiry_screen.dart';
 import 'package:gifting/features/home/views/dashboard_screen.dart';
 
@@ -12,7 +12,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-  List<Widget> screens = [DashboardScreen(), EnquiryScreen()];
+  List<Widget> get screens => [const DashboardScreen(), const EnquiryScreen()];
 
   @override
   Widget build(BuildContext context) {
@@ -21,27 +21,6 @@ class _HomeScreenState extends State<HomeScreen> {
         bool isMobile = constraints.maxWidth < 750;
 
         return Scaffold(
-          // appBar: AppBar(
-          //   automaticallyImplyLeading: false,
-          //   title: Row(
-          //     spacing: 8,
-          //     children: [
-          //       const Icon(
-          //         Icons.eco_outlined,
-          //         color: AppColors.primary,
-          //         size: 30,
-          //       ),
-          //       const Text(
-          //         'TRIBE GREEN',
-          //         style: TextStyle(
-          //           fontWeight: FontWeight.w800,
-          //           letterSpacing: 1.5,
-          //           color: AppColors.darkGreen,
-          //         ),
-          //       ),
-          //     ],
-          //   ),
-          // ),
           body: isMobile
               ? IndexedStack(index: selectedIndex, children: screens)
               : Row(
@@ -51,15 +30,23 @@ class _HomeScreenState extends State<HomeScreen> {
                         selectedIndex = value;
                         setState(() {});
                       },
-                      leading: SizedBox(height: 20),
-                      destinations: [
+                      leading: const Column(
+                        children: [
+                          SizedBox(height: 16),
+                          ThemeToggleButton(),
+                          SizedBox(height: 12),
+                        ],
+                      ),
+                      destinations: const [
                         NavigationRailDestination(
-                          icon: Icon(Icons.home),
-                          label: Text("Home"),
+                          icon: Icon(Icons.home_outlined),
+                          selectedIcon: Icon(Icons.home),
+                          label: Text('Home'),
                         ),
                         NavigationRailDestination(
-                          icon: Icon(Icons.question_answer),
-                          label: Text("Enquiry"),
+                          icon: Icon(Icons.query_stats_outlined),
+                          selectedIcon: Icon(Icons.query_stats),
+                          label: Text('Enquiry'),
                         ),
                       ],
                       selectedIndex: selectedIndex,
@@ -74,17 +61,16 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
           bottomNavigationBar: isMobile
               ? BottomNavigationBar(
-                  backgroundColor: AppColors.background,
-                  items: [
+                  items: const [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home_outlined),
                       activeIcon: Icon(Icons.home),
-                      label: "Home",
+                      label: 'Home',
                     ),
                     BottomNavigationBarItem(
-                      icon: Icon(Icons.question_answer_outlined),
-                      activeIcon: Icon(Icons.question_answer),
-                      label: "Enquiry",
+                      icon: Icon(Icons.query_stats_outlined),
+                      activeIcon: Icon(Icons.query_stats),
+                      label: 'Enquiry',
                     ),
                   ],
                   currentIndex: selectedIndex,

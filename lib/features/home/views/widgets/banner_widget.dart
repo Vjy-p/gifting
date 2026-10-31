@@ -1,7 +1,12 @@
+import 'dart:async';
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/features/catalogue/models/product_model.dart';
 
 import '../../../catalogue/controllers/catalogue_controller.dart';
 
@@ -16,7 +21,7 @@ class BannerWidget extends GetView<CatalogueController> {
         final content = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'CORPORATE GIFTING',
               style: TextStyle(
                 color: AppColors.primary,
@@ -52,6 +57,7 @@ class BannerWidget extends GetView<CatalogueController> {
               children: [
                 ElevatedButton(
                   onPressed: () {
+                    controller.clearFilters();
                     controller.selectCategory(controller.categories.first);
                     Get.toNamed(AppRoutes.catalogue);
                   },
@@ -68,28 +74,21 @@ class BannerWidget extends GetView<CatalogueController> {
           ],
         );
 
-        final image = Container(
-          height: isMobile ? 200 : 420,
-          width: double.infinity,
-          decoration: BoxDecoration(
-            color: AppColors.sage,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: const Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(Icons.card_giftcard, size: 76, color: AppColors.primary),
-              SizedBox(height: 12),
-              Text(
-                'Thoughtfully curated gifts',
-                style: TextStyle(
-                  color: AppColors.darkGreen,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ],
-          ),
-        );
+        final image = Obx(() {
+          return SizedBox(
+            height: isMobile ? 200 : 420,
+            width: double.infinity,
+            child: Card(
+              margin: EdgeInsets.zero,
+              child: controller.bannerProducts.isEmpty
+                  ? emptyBanner(context)
+                  : BannerCarousel(
+                      products: controller.bannerProducts,
+                      height: isMobile ? 200 : 420,
+                    ),
+            ),
+          );
+        });
 
         return Padding(
           padding: EdgeInsets.symmetric(
@@ -111,6 +110,159 @@ class BannerWidget extends GetView<CatalogueController> {
                 ),
         );
       },
+    );
+  }
+
+  Widget emptyBanner(BuildContext context) {
+    return Container(
+      alignment: Alignment.center,
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: Column(
+        spacing: 8,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.card_giftcard,
+            size: 76,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          Text(
+            'Thoughtfully curated gifts',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class BannerCarousel extends StatefulWidget {
+  const BannerCarousel({
+    super.key,
+    required this.products,
+    required this.height,
+  });
+
+  final List<ProductModel> products;
+  final double height;
+
+  @override
+  State<BannerCarousel> createState() => _BannerCarouselState();
+}
+
+class _BannerCarouselState extends State<BannerCarousel> {
+  final CarouselController _carouselController = CarouselController();
+
+  Timer? _timer;
+  int _currentIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startAutoScroll();
+  }
+
+  void _startAutoScroll() {
+    _timer?.cancel();
+
+    if (widget.products.length <= 1) return;
+
+    _timer = Timer.periodic(const Duration(seconds: 3), (_) {
+      if (!mounted || widget.products.isEmpty) return;
+
+      _currentIndex++;
+
+      _carouselController.animateToItem(
+        _currentIndex,
+        duration: const Duration(milliseconds: 800),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant BannerCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.products.length != widget.products.length) {
+      _currentIndex = 0;
+      _startAutoScroll();
+    }
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _carouselController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.products.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        double width = MediaQuery.of(context).size.width;
+        log('width $width');
+        return SizedBox(
+          height: widget.height,
+          child: CarouselView.weightedBuilder(
+            controller: _carouselController,
+            itemCount: widget.products.length,
+            flexWeights: width >= 700 && width < 1100 ? const [1] : [1, 2, 3],
+            infinite: true,
+            // reverse: true,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+            padding: const EdgeInsets.all(10),
+            itemBuilder: (context, index) {
+              final product = widget.products[index];
+              return ClipRRect(
+                borderRadius: BorderRadius.circular(16),
+                child: CachedNetworkImage(
+                  imageUrl: product.imageUrl ?? '',
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  placeholder: (context, url) =>
+                      const Center(child: CircularProgressIndicator()),
+                  errorWidget: (context, url, error) => emptyWdget(context),
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Widget emptyWdget(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.secondaryContainer,
+      child: Column(
+        spacing: 8,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.card_giftcard,
+            size: 76,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+          Text(
+            'Thoughtfully curated gifts',
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.onSecondaryContainer,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

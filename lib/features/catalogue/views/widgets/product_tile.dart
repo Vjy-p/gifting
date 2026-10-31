@@ -12,7 +12,7 @@ class ProductTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -24,9 +24,9 @@ class ProductTile extends StatelessWidget {
               flex: 6,
               child: Container(
                 // width: 48,
-                color: AppColors.sage,
+                color: Theme.of(context).colorScheme.surface,
                 child: Center(
-                  child: productImage(imageUrl: product.imageUrl ?? ""),
+                  child: productImage(imageUrl: product.imageUrl ?? ''),
                 ),
               ),
             ),
@@ -41,7 +41,7 @@ class ProductTile extends StatelessWidget {
                   children: [
                     Text(
                       product.category.toUpperCase(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.primary,
                         fontSize: 10,
                         letterSpacing: 1,
@@ -52,7 +52,7 @@ class ProductTile extends StatelessWidget {
                       product.name,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.text,
                         fontSize: 15,
                         fontWeight: FontWeight.w600,
@@ -60,7 +60,7 @@ class ProductTile extends StatelessWidget {
                     ),
                     Text(
                       '${product.priceRange} / unit',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.secondaryText,
                         fontSize: 12,
                       ),
@@ -84,7 +84,7 @@ class ProductTile extends StatelessWidget {
 
   Widget productImage({required String imageUrl}) {
     if (imageUrl.isEmpty) {
-      return const Center(
+      return Center(
         child: Icon(Icons.card_giftcard, size: 56, color: AppColors.primary),
       );
     }
@@ -94,7 +94,7 @@ class ProductTile extends StatelessWidget {
       fit: BoxFit.cover,
       width: double.infinity,
       errorWidget: (context, error, stackTrace) {
-        return const Center(
+        return Center(
           child: Icon(
             Icons.broken_image_outlined,
             size: 48,

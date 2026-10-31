@@ -41,7 +41,7 @@ class HowItWorksWidget extends StatelessWidget {
               return Container(
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: AppColors.surface,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(color: AppColors.border),
                 ),
@@ -51,7 +51,7 @@ class HowItWorksWidget extends StatelessWidget {
                   children: [
                     Text(
                       step.$1,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.gold,
                         fontSize: 24,
                         fontWeight: FontWeight.w700,
@@ -60,7 +60,7 @@ class HowItWorksWidget extends StatelessWidget {
                     const SizedBox(height: 12),
                     Text(
                       step.$2,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: AppColors.darkGreen,
                         fontSize: 17,
                         fontWeight: FontWeight.w600,

@@ -21,10 +21,10 @@ class RetryWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(message ?? "Something went wrong!", textAlign: TextAlign.center),
+          Text(message ?? 'Something went wrong!', textAlign: TextAlign.center),
           ElevatedButton(
             onPressed: onPressed,
-            child: Text(buttonLabel ?? "Retry"),
+            child: Text(buttonLabel ?? 'Retry'),
           ),
         ],
       ),

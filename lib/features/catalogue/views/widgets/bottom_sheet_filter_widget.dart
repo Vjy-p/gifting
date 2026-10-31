@@ -28,7 +28,8 @@ Future<void> openBottomSheetFilterWidget(
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.border,
+              color: Theme.of(context).colorScheme.surfaceContainerLow,
+              // color: AppColors.border
               borderRadius: BorderRadius.circular(2),
             ),
           ),

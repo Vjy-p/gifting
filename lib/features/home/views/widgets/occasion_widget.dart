@@ -35,15 +35,14 @@ class OccasionWidget extends StatelessWidget {
               return InkWell(
                 onTap: () {
                   final catalogueController = Get.find<CatalogueController>();
-                  catalogueController.selectCategory(
-                    catalogueController.categories.first,
-                  );
+                  catalogueController.clearFilters();
+                  catalogueController.toggleOccasion(occasions[index].$1);
                   Get.toNamed(AppRoutes.catalogue);
                 },
                 child: Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: AppColors.surface,
+                    color: Theme.of(context).colorScheme.surface,
                     border: Border.all(color: AppColors.border),
                     borderRadius: BorderRadius.circular(12),
                   ),
@@ -55,7 +54,7 @@ class OccasionWidget extends StatelessWidget {
                       Text(
                         item.$1,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: AppColors.text,
                           fontWeight: FontWeight.w600,
                         ),

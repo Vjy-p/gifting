@@ -202,7 +202,7 @@ class EnquiryController extends GetxController {
       deliveryDate.value = picked;
       deliveryDateController.text = DateFormat('dd MMM yyyy').format(picked);
       deliveryDate.refresh();
-      log("picked delivery date ${deliveryDate.value}");
+      log('picked delivery date ${deliveryDate.value}');
     }
   }
 
@@ -310,7 +310,7 @@ class EnquiryController extends GetxController {
           ? 'ios'
           : GetPlatform.isAndroid
           ? 'android'
-          : "none",
+          : 'none',
     );
 
     try {
@@ -328,7 +328,7 @@ class EnquiryController extends GetxController {
       await localEnquiryServices.saveEnquiry(enquiry);
       loadEnquiries();
     } catch (error) {
-      log("Error submit form $error");
+      log('Error submit form $error');
       Get.snackbar(
         'Submission failed',
         'Your enquiry could not be saved. Please try again.',
@@ -349,7 +349,7 @@ class EnquiryController extends GetxController {
     } catch (e) {
       isLoading.value = false;
       error.value = true;
-      log("Erro load enquiries $e");
+      log('Erro load enquiries $e');
     } finally {
       isLoading.value = false;
     }
@@ -391,7 +391,7 @@ class EnquiryController extends GetxController {
                   child: ClipRRect(
                     borderRadius: BorderRadiusGeometry.circular(16),
                     child: Image.asset(
-                      "assets/gif/success.gif",
+                      'assets/gif/success.gif',
                       width: 140,
                       height: 140,
                       fit: BoxFit.contain,
@@ -399,13 +399,13 @@ class EnquiryController extends GetxController {
                   ),
                 ),
                 const SizedBox(height: 28),
-                Text(
+                const Text(
                   'Thank you!',
                   style: TextStyle(fontSize: 34, letterSpacing: 0.25),
                   textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 12),
-                Text(
+                const Text(
                   'Your enquiry has been submitted successfully. '
                   'Our team will contact you within 24 hours.',
                   textAlign: TextAlign.center,
@@ -423,14 +423,14 @@ class EnquiryController extends GetxController {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Enquiry reference',
                         style: TextStyle(color: AppColors.secondaryText),
                       ),
                       const SizedBox(height: 6),
                       SelectableText(
-                        referenceCode ?? enquiry.referenceCode ?? "",
-                        style: const TextStyle(
+                        referenceCode ?? enquiry.referenceCode ?? '',
+                        style: TextStyle(
                           fontWeight: FontWeight.w700,
                           color: AppColors.darkGreen,
                           fontSize: 18,
@@ -448,7 +448,7 @@ class EnquiryController extends GetxController {
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              const Icon(
+                              Icon(
                                 Icons.check_circle_outline,
                                 size: 18,
                                 color: AppColors.primary,
@@ -477,7 +477,7 @@ class EnquiryController extends GetxController {
                     onPressed: () {
                       CommonServices().openWhatsApp(
                         referenceCode:
-                            referenceCode ?? enquiry.referenceCode ?? "",
+                            referenceCode ?? enquiry.referenceCode ?? '',
                         products: enquiry.products,
                         qunatity: enquiry.quantity.toString(),
                       );

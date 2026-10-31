@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
 import 'package:gifting/features/catalogue/views/widgets/bottom_sheet_filter_widget.dart';
 import 'package:gifting/features/catalogue/views/widgets/product_tile.dart';
@@ -23,6 +24,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
         title: const Text('Tribe Green'),
         backgroundColor: AppColors.surface,
         actions: [
+          const ThemeToggleButton(),
           TextButton(
             onPressed: () => Get.offAllNamed(AppRoutes.home),
             child: const Text('Home'),
@@ -66,7 +68,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
                       ),
                       if (isMobile)
                         IconButton(
-                          style: ButtonStyle(
+                          style: const ButtonStyle(
                             tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                             visualDensity: VisualDensity.compact,
                           ),
@@ -74,7 +76,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
                             openBottomSheetFilterWidget(context, controller);
                           },
                           iconSize: 20,
-                          icon: Icon(Icons.filter_alt, size: 20),
+                          icon: const Icon(Icons.filter_alt, size: 20),
                         ),
                     ],
                   ),
@@ -85,13 +87,13 @@ class CatalogueScreen extends GetView<CatalogueController> {
                         : Row(
                             children: [
                               ConstrainedBox(
-                                constraints: BoxConstraints(
+                                constraints: const BoxConstraints(
                                   minWidth: 120,
                                   maxWidth: 280,
                                 ),
                                 child: WebFilterWidget(controller: controller),
                               ),
-                              VerticalDivider(),
+                              const VerticalDivider(),
                               Expanded(child: productsWidget()),
                             ],
                           ),

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/theme/theme_toggle_button.dart';
 
 import '../controllers/enquiry_controller.dart';
 
@@ -14,9 +15,15 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
   @override
   Widget build(BuildContext context) {
     final isMobile = MediaQuery.of(context).size.width < 1000;
-    log("width ${MediaQuery.of(context).size.width} ");
+    log('width ${MediaQuery.of(context).size.width} ');
     return Scaffold(
-      appBar: AppBar(title: const Text('Request a Quote')),
+      appBar: AppBar(
+        title: const Text('Request a Quote'),
+        actions: const [
+          ThemeToggleButton(),
+          SizedBox(width: 8),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
         child: Center(
@@ -140,7 +147,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                           controller: controller.deliveryDateController,
                           focusNode: controller.deliveryDateFocus,
                           readOnly: true,
-                          decoration: InputDecoration(
+                          decoration: const InputDecoration(
                             label: Text('Choose delivery date'),
                             suffixIcon: Icon(
                               Icons.calendar_today_rounded,
@@ -189,7 +196,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                         focusNode: controller.messageFocus,
                       ),
                       const SizedBox(height: 12),
-                      const Text(
+                      Text(
                         'Your information will be used to handle your gifting enquiry.',
                         style: TextStyle(
                           color: AppColors.secondaryText,
@@ -237,7 +244,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
+                  const Expanded(
                     child: Text(
                       'Selected Products',
                       style: TextStyle(fontSize: 16, letterSpacing: 0.15),
@@ -252,8 +259,8 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
               ),
               Obx(() {
                 if (controller.selectedProducts.isEmpty) {
-                  return Center(
-                    child: const Text(
+                  return const Center(
+                    child: Text(
                       'No products selected yet.',
                       textAlign: TextAlign.center,
                     ),
@@ -264,7 +271,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                   child: ListView.separated(
                     itemCount: controller.selectedProducts.length,
                     scrollDirection: Axis.horizontal,
-                    padding: EdgeInsets.only(bottom: 20),
+                    padding: const EdgeInsets.only(bottom: 20),
                     clipBehavior: Clip.none,
                     itemBuilder: (context, index) {
                       final product = controller.selectedProducts[index];
@@ -282,7 +289,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                       borderRadius:
                                           BorderRadiusGeometry.circular(12),
                                       child: CachedNetworkImage(
-                                        imageUrl: product.imageUrl ?? "",
+                                        imageUrl: product.imageUrl ?? '',
                                         width: double.infinity,
                                         fit: BoxFit.cover,
                                       ),
@@ -308,8 +315,8 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                   onPressed: () {
                                     controller.removeSelectedProduct(product);
                                   },
-                                  icon: Icon(Icons.remove_circle),
-                                  tooltip: "Remove",
+                                  icon: const Icon(Icons.remove_circle),
+                                  tooltip: 'Remove',
                                 ),
                               ),
                             ],
@@ -317,7 +324,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => SizedBox(width: 8),
+                    separatorBuilder: (context, index) => const SizedBox(width: 8),
                   ),
                 );
               }),
@@ -332,7 +339,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
               children: [
                 Row(
                   children: [
-                    Expanded(
+                    const Expanded(
                       child: Text(
                         'Selected Products',
                         style: TextStyle(fontSize: 16, letterSpacing: 0.15),
@@ -347,10 +354,10 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                 ),
                 Obx(() {
                   if (controller.selectedProducts.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 30),
+                    return const Padding(
+                      padding: EdgeInsets.only(top: 30),
                       child: Center(
-                        child: const Text('No products selected yet.'),
+                        child: Text('No products selected yet.'),
                       ),
                     );
                   }
@@ -366,21 +373,21 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                 spacing: 10,
                                 children: [
                                   ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 160),
+                                    constraints: const BoxConstraints(maxWidth: 160),
                                     child: AspectRatio(
                                       aspectRatio: 1,
                                       child: ClipRRect(
                                         borderRadius:
                                             BorderRadiusGeometry.circular(12),
                                         child: CachedNetworkImage(
-                                          imageUrl: product.imageUrl ?? "",
+                                          imageUrl: product.imageUrl ?? '',
                                           fit: BoxFit.cover,
                                         ),
                                       ),
                                     ),
                                   ),
                                   ConstrainedBox(
-                                    constraints: BoxConstraints(maxWidth: 160),
+                                    constraints: const BoxConstraints(maxWidth: 160),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(
@@ -399,8 +406,8 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                   onPressed: () {
                                     controller.removeSelectedProduct(product);
                                   },
-                                  icon: Icon(Icons.remove_circle),
-                                  tooltip: "Remove",
+                                  icon: const Icon(Icons.remove_circle),
+                                  tooltip: 'Remove',
                                 ),
                               ),
                             ],
@@ -420,7 +427,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
       padding: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
-        style: const TextStyle(
+        style: TextStyle(
           color: AppColors.darkGreen,
           fontSize: 18,
           fontWeight: FontWeight.w600,
@@ -473,7 +480,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
         labelText: label,
         hintText: hint,
         alignLabelWithHint: maxLines > 1,
-        counterText: "",
+        counterText: '',
       ),
       onFieldSubmitted: (value) {
         controller.fieldFocusChange(

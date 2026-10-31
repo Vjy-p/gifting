@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/features/enquiries/views/enquiry_details_screen.dart';
 import 'package:intl/intl.dart';
 
 import '../models/enquiry_model.dart';
@@ -13,7 +15,7 @@ class EnquiryTile extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: AppColors.sage,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
@@ -26,7 +28,7 @@ class EnquiryTile extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  enquiry.referenceCode ?? "",
+                  enquiry.referenceCode ?? '',
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 15,
@@ -35,7 +37,7 @@ class EnquiryTile extends StatelessWidget {
               ),
               if (enquiry.createdAt != null)
                 Text(
-                  DateFormat("dd-MMM-yyyy hh:mm a").format(enquiry.createdAt!),
+                  DateFormat('dd-MMM-yyyy hh:mm a').format(enquiry.createdAt!),
                   style: TextStyle(
                     color: AppColors.secondaryText,
                     fontSize: 12,
@@ -53,22 +55,38 @@ class EnquiryTile extends StatelessWidget {
           Text('Products: ${enquiry.products.length}'),
           if (enquiry.customisations.isEmpty)
             Text('Customisations: ${enquiry.customisations.join(", ")}'),
-          // const Divider(),
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Text(
-          //       enquiry.createdAt?.toString().split(' ').first ?? '',
-          //       style: const TextStyle(color: Colors.grey, fontSize: 12),
-          //     ),
-          //     TextButton(
-          //       onPressed: () {
-          //         // Open enquiry details screen/sheet.
-          //       },
-          //       child: const Text('View details →'),
-          //     ),
-          //   ],
-          // ),
+          const Divider(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                enquiry.createdAt?.toString().split(' ').first ?? '',
+                style: TextStyle(color: AppColors.secondaryText, fontSize: 12),
+              ),
+              TextButton(
+                onPressed: () {
+                  Get.dialog(
+                    barrierColor: AppColors.isDark
+                        ? Colors.black.withValues(alpha: 0.7)
+                        : AppColors.darkGreen.withValues(alpha: 0.4),
+                    Dialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      insetPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      backgroundColor: AppColors.surface,
+                      constraints: const BoxConstraints(maxWidth: 600),
+                      child: EnquiryDetailsScreen(enquiry: enquiry),
+                    ),
+                  );
+                },
+                child: const Text('View details →'),
+              ),
+            ],
+          ),
         ],
       ),
     );

@@ -45,6 +45,7 @@ class CategoryWidget extends StatelessWidget {
                 icon: item.$2,
                 onTap: () {
                   final catalogueController = Get.find<CatalogueController>();
+                  catalogueController.clearFilters();
                   catalogueController.selectCategory(item.$1);
                   Get.toNamed(AppRoutes.catalogue);
                 },

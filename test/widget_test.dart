@@ -1,30 +1,61 @@
-// This is a basic Flutter widget test.
-//
-// To perform an interaction with a widget in your test, use the WidgetTester
-// utility in the flutter_test package. For example, you can send tap and scroll
-// gestures. You can also use WidgetTester to find child widgets in the widget
-// tree, read text, and verify that the values of widget properties are correct.
-
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-import 'package:gifting/main.dart';
+import 'package:get/get.dart';
+import 'package:gifting/core/theme/theme_controller.dart';
+import 'package:gifting/core/widgets/restart_widget.dart';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  setUp(() {
+    Get.testMode = true;
+    Get.reset();
+  });
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
+  test('ThemeController toggles theme between light and dark', () {
+    final controller = Get.put(ThemeController());
 
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
-    await tester.pump();
+    // Explicitly set to light mode
+    controller.setThemeMode(ThemeMode.light);
+    expect(controller.themeMode, ThemeMode.light);
+    expect(controller.isDarkMode, false);
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    // Toggle to dark mode
+    controller.toggleTheme();
+    expect(controller.themeMode, ThemeMode.dark);
+    expect(controller.isDarkMode, true);
+
+    // Toggle back to light mode
+    controller.toggleTheme();
+    expect(controller.themeMode, ThemeMode.light);
+    expect(controller.isDarkMode, false);
+  });
+
+  testWidgets('RestartWidget restarts the application widget tree', (tester) async {
+    int buildCount = 0;
+
+    await tester.pumpWidget(
+      RestartWidget(
+        child: Builder(
+          builder: (context) {
+            buildCount++;
+            return const MaterialApp(
+              home: Scaffold(
+                body: Text('App Content'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    expect(find.text('App Content'), findsOneWidget);
+    expect(buildCount, 1);
+
+    // Trigger restart
+    RestartWidget.restart();
+    await tester.pumpAndSettle();
+
+    // Rebuilt with a fresh tree
+    expect(buildCount, 2);
+    expect(find.text('App Content'), findsOneWidget);
   });
 }
