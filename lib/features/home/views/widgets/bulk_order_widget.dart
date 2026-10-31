@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:gifting/core/theme/app_colors.dart';
 
 class BulkOrderWidget extends StatelessWidget {
   const BulkOrderWidget({super.key, required this.isMobile});
@@ -11,7 +10,7 @@ class BulkOrderWidget extends StatelessWidget {
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 24),
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 56),
-      color: AppColors.sage,
+      color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [
           Text(

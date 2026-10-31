@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -46,6 +47,9 @@ class CatalogueController extends GetxController {
     '₹1,500 – ₹3,000',
     'Above ₹3,000',
   ];
+
+  RxList<ProductModel> trendingProducts = <ProductModel>[].obs;
+  RxList<ProductModel> bannerProducts = <ProductModel>[].obs;
 
   final products = <ProductModel>[].obs;
 
@@ -100,6 +104,7 @@ class CatalogueController extends GetxController {
   void onInit() {
     super.onInit();
     loadProducts();
+    loadBannerProducts();
   }
 
   Future<void> loadProducts({bool reset = true}) async {
@@ -133,12 +138,36 @@ class CatalogueController extends GetxController {
       } else {
         products.addAll(result);
       }
-
       hasMore.value = result.length == pageSize;
 
       if (hasMore.value) {
         _currentPage++;
       }
+    } catch (error) {
+      errorMessage.value = 'Unable to load products. Please try again.';
+      debugPrint('Catalogue error: $error');
+    } finally {
+      isLoading.value = false;
+      isLoadingMore.value = false;
+    }
+  }
+
+  Future<void> loadBannerProducts() async {
+    try {
+      final result = await _repository.fetchProducts(
+        page: _currentPage,
+        limit: pageSize,
+        category: 'Drinkware',
+      );
+
+      trendingProducts.value = List.from(result);
+
+      bannerProducts.value = List.from(result);
+      bannerProducts.removeWhere(
+        (element) =>
+            element.imageUrl == null || element.imageUrl?.isEmpty == true,
+      );
+      log('banner images $bannerProducts');
     } catch (error) {
       errorMessage.value = 'Unable to load products. Please try again.';
       debugPrint('Catalogue error: $error');

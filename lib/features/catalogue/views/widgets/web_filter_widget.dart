@@ -153,7 +153,7 @@ Future<void> showCatalogueFilterSheet(
             width: 40,
             height: 4,
             decoration: BoxDecoration(
-              color: AppColors.border,
+              color: Theme.of(context).colorScheme.surfaceContainerLowest,
               borderRadius: BorderRadius.circular(2),
             ),
           ),

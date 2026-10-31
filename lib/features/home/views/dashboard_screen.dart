@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/features/home/views/widgets/banner_widget.dart';
 import 'package:gifting/features/home/views/widgets/bulk_order_widget.dart';
 import 'package:gifting/features/home/views/widgets/category_screen.dart';
@@ -36,12 +37,9 @@ class DashboardScreen extends GetView<CatalogueController> {
             title: Row(
               spacing: 8,
               children: [
-                const Icon(
-                  Icons.eco_outlined,
-                  color: AppColors.primary,
-                  size: 30,
-                ),
-                const Text(
+                Icon(Icons.eco_outlined, color: AppColors.primary, size: 30),
+
+                Text(
                   'TRIBE GREEN',
                   style: TextStyle(
                     fontWeight: FontWeight.w800,
@@ -51,15 +49,17 @@ class DashboardScreen extends GetView<CatalogueController> {
                 ),
               ],
             ),
+            actionsPadding: const EdgeInsets.only(right: 8),
+            actions: [if (isMobile) const ThemeToggleButton()],
           ),
           body: SingleChildScrollView(
             child: Column(
               children: [
                 BannerWidget(isMobile: isMobile),
-                FeaturesWidget(),
-                CategoryWidget(),
+                const FeaturesWidget(),
+                const CategoryWidget(),
                 ProductsWidget(controller: controller),
-                OccasionWidget(occasions: _occasions),
+                const OccasionWidget(occasions: _occasions),
                 HowItWorksWidget(isMobile: isMobile),
                 BulkOrderWidget(isMobile: isMobile),
                 FooterWidget(isMobile: isMobile),
@@ -69,13 +69,5 @@ class DashboardScreen extends GetView<CatalogueController> {
         );
       },
     );
-  }
-
-  Widget mobileWidget() {
-    return Column(children: []);
-  }
-
-  Widget webWidget() {
-    return Row(children: [Column(children: [])]);
   }
 }

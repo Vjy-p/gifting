@@ -18,19 +18,16 @@ class ProductsWidget extends StatelessWidget {
       title: 'Most Requested Corporate Gifts',
       subtitle: 'Thoughtful products for every business occasion.',
       child: Obx(() {
-        final products = controller.products;
-        final displayed = controller.selectedCategory.value == 'All Gifts'
-            ? products.take(4).toList()
-            : products;
+        final products = controller.trendingProducts.value;
 
         return LayoutBuilder(
           builder: (context, constraints) {
             final columns = constraints.maxWidth < 700 ? 2 : 4;
-            log("width ${constraints.maxWidth}");
+            log('width ${constraints.maxWidth}');
             return GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
-              itemCount: displayed.length,
+              itemCount: products.length,
               gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: columns,
                 crossAxisSpacing: 16,
@@ -43,11 +40,11 @@ class ProductsWidget extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 return ProductTile(
-                  product: displayed[index],
+                  product: products[index],
                   onTap: () {
                     Get.toNamed(
                       AppRoutes.productDetails,
-                      arguments: displayed[index],
+                      arguments: products[index],
                     );
                   },
                 );

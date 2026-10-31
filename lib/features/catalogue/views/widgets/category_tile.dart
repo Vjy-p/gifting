@@ -16,7 +16,7 @@ class CategoryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: AppColors.surface,
+      color: Theme.of(context).colorScheme.surface,
       borderRadius: BorderRadius.circular(12),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
@@ -30,7 +30,7 @@ class CategoryTile extends StatelessWidget {
                 height: 72,
                 width: 72,
                 decoration: BoxDecoration(
-                  color: AppColors.sage,
+                  color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(10),
                 ),
                 child: Icon(icon, size: 34, color: AppColors.primary),
@@ -38,14 +38,14 @@ class CategoryTile extends StatelessWidget {
               const SizedBox(height: 16),
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.w600,
                   color: AppColors.text,
                 ),
               ),
               const SizedBox(height: 8),
-              const Row(
+              Row(
                 children: [
                   Text(
                     'Explore',
@@ -54,7 +54,7 @@ class CategoryTile extends StatelessWidget {
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                  SizedBox(width: 6),
+                  const SizedBox(width: 6),
                   Icon(Icons.arrow_forward, size: 16, color: AppColors.primary),
                 ],
               ),

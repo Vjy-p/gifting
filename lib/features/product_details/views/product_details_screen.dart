@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/services/common_services.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/theme/theme_toggle_button.dart';
 
 import '../controllers/product_details_controller.dart';
 
@@ -13,7 +14,10 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Product Details')),
+      appBar: AppBar(
+        title: const Text('Product Details'),
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
+      ),
       body: LayoutBuilder(
         builder: (context, constraints) {
           final isMobile = constraints.maxWidth < 750;
@@ -38,7 +42,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        productImage(),
+        productImage(context),
         const SizedBox(height: 24),
         _productInformation(context),
       ],
@@ -49,17 +53,17 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: productImage()),
+        Expanded(child: productImage(context)),
         const SizedBox(width: 48),
         Expanded(child: _productInformation(context)),
       ],
     );
   }
 
-  Widget productImage() {
-    final String imageUrl = controller.product.imageUrl ?? "";
+  Widget productImage(context) {
+    final String imageUrl = controller.product.imageUrl ?? '';
     if (imageUrl.isEmpty) {
-      return const Center(
+      return Center(
         child: Icon(Icons.card_giftcard, size: 56, color: AppColors.primary),
       );
     }
@@ -68,7 +72,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       aspectRatio: 1,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.sage,
+          color: Theme.of(context).colorScheme.surface,
           borderRadius: BorderRadius.circular(12),
         ),
         clipBehavior: Clip.antiAlias,
@@ -77,7 +81,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
           fit: BoxFit.cover,
           width: double.infinity,
           errorWidget: (context, error, stackTrace) {
-            return const Center(
+            return Center(
               child: Icon(
                 Icons.card_giftcard_outlined,
                 size: 96,
@@ -96,7 +100,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
       children: [
         Text(
           controller.product.category.toUpperCase(),
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.primary,
             letterSpacing: 1.5,
             fontSize: 12,
@@ -111,7 +115,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
         const SizedBox(height: 12),
         Text(
           '${controller.product.priceRange} / unit',
-          style: const TextStyle(
+          style: TextStyle(
             color: AppColors.primary,
             fontSize: 20,
             fontWeight: FontWeight.w600,
@@ -182,7 +186,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
           ),
         ),
         const SizedBox(height: 28),
-        const Text(
+        Text(
           'Final pricing depends on order quantity and customisation.',
           style: TextStyle(color: AppColors.secondaryText, fontSize: 13),
         ),
@@ -221,7 +225,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   Widget _sectionTitle(String title) {
     return Text(
       title,
-      style: const TextStyle(
+      style: TextStyle(
         color: AppColors.text,
         fontSize: 17,
         fontWeight: FontWeight.w600,

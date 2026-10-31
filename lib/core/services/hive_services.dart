@@ -4,6 +4,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveService {
   static const String enquiryBoxName = 'enquiries';
+  static const String settingsBoxName = 'settings';
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -12,9 +13,14 @@ class HiveService {
     Hive.registerAdapter(EnquiryModelAdapter());
 
     await Hive.openBox<EnquiryModel>(enquiryBoxName);
+    await Hive.openBox(settingsBoxName);
   }
 
   static Box<EnquiryModel> get enquiryBox {
     return Hive.box<EnquiryModel>(enquiryBoxName);
+  }
+
+  static Box get settingsBox {
+    return Hive.box(settingsBoxName);
   }
 }
