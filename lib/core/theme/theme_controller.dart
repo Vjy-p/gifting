@@ -66,7 +66,6 @@ class ThemeController extends GetxController {
     } catch (_) {}
     Get.changeThemeMode(mode);
 
-    // Restart the entire app so all containers, cards, and cached states rebuild cleanly
     RestartWidget.restart();
   }
 }

@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
       () => GetMaterialApp(
         title: 'Gifting',
         debugShowCheckedModeBanner: false,
+
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeController.themeMode,

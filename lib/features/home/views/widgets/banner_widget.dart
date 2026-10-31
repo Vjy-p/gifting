@@ -116,7 +116,11 @@ class BannerWidget extends GetView<CatalogueController> {
   Widget emptyBanner(BuildContext context) {
     return Container(
       alignment: Alignment.center,
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).colorScheme.secondaryContainer,
+      ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         spacing: 8,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -215,7 +219,11 @@ class _BannerCarouselState extends State<BannerCarousel> {
           child: CarouselView.weightedBuilder(
             controller: _carouselController,
             itemCount: widget.products.length,
-            flexWeights: width >= 700 && width < 1100 ? const [1] : [1, 2, 3],
+            flexWeights: width >= 700 && width < 1200
+                ? const [1]
+                : width >= 1200 && width < 1400
+                ? [1, 2]
+                : [1, 2, 3],
             infinite: true,
             // reverse: true,
             shape: RoundedRectangleBorder(
@@ -226,13 +234,16 @@ class _BannerCarouselState extends State<BannerCarousel> {
               final product = widget.products[index];
               return ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: CachedNetworkImage(
-                  imageUrl: product.imageUrl ?? '',
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  placeholder: (context, url) =>
-                      const Center(child: CircularProgressIndicator()),
-                  errorWidget: (context, url, error) => emptyWdget(context),
+                child: AspectRatio(
+                  aspectRatio: 1,
+                  child: CachedNetworkImage(
+                    imageUrl: product.imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    placeholder: (context, url) =>
+                        const Center(child: CircularProgressIndicator()),
+                    errorWidget: (context, url, error) => emptyWdget(context),
+                  ),
                 ),
               );
             },
@@ -244,7 +255,10 @@ class _BannerCarouselState extends State<BannerCarousel> {
 
   Widget emptyWdget(BuildContext context) {
     return Container(
-      color: Theme.of(context).colorScheme.secondaryContainer,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(16),
+        color: Theme.of(context).colorScheme.secondaryContainer,
+      ),
       child: Column(
         spacing: 8,
         mainAxisAlignment: MainAxisAlignment.center,
@@ -256,6 +270,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
           ),
           Text(
             'Thoughtfully curated gifts',
+            overflow: TextOverflow.ellipsis,
             style: TextStyle(
               color: Theme.of(context).colorScheme.onSecondaryContainer,
               fontWeight: FontWeight.w600,
