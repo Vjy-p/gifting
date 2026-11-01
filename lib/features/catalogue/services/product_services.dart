@@ -2,7 +2,7 @@ import 'dart:developer';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../models/product_model.dart';
+import '../../products/models/product_model.dart';
 
 class ProductServices {
   ProductServices({SupabaseClient? client})
@@ -12,7 +12,7 @@ class ProductServices {
 
   Future<List<ProductModel>> fetchProducts({
     int page = 0,
-    int limit = 8,
+    int limit = 10,
     String search = '',
     String category = 'All Gifts',
     int? minPrice,

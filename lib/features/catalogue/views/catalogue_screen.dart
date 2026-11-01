@@ -4,12 +4,12 @@ import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
 import 'package:gifting/features/catalogue/views/widgets/bottom_sheet_filter_widget.dart';
-import 'package:gifting/features/catalogue/views/widgets/product_tile.dart';
 import 'package:gifting/features/catalogue/views/widgets/web_filter_widget.dart';
+import 'package:gifting/features/products/views/product_tile.dart';
 
 import '../../../app/routes/app_routes.dart';
+import '../../products/models/product_model.dart';
 import '../controllers/catalogue_controller.dart';
-import '../models/product_model.dart';
 
 class CatalogueScreen extends GetView<CatalogueController> {
   const CatalogueScreen({super.key});
@@ -113,7 +113,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
         return const Center(child: CircularProgressIndicator());
       }
 
-      if (controller.errorMessage.value.isNotEmpty) {
+      if (controller.error.value) {
         return RetryWidget(onPressed: controller.loadProducts);
       }
 
@@ -138,15 +138,16 @@ class CatalogueScreen extends GetView<CatalogueController> {
 
           return GridView.builder(
             itemCount: products.length,
+            physics: const BouncingScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               crossAxisSpacing: 18,
               mainAxisSpacing: 18,
-              childAspectRatio: columns == 1 ? 1.35 : 0.68,
+
+              childAspectRatio: columns == 1 ? 1.3 : 0.68,
             ),
             itemBuilder: (context, index) {
               final ProductModel product = products[index];
-
               return ProductTile(
                 product: product,
                 onTap: () {

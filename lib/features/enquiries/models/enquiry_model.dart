@@ -1,4 +1,4 @@
-import 'package:gifting/features/catalogue/models/product_model.dart';
+import 'package:gifting/features/products/models/product_model.dart';
 import 'package:hive/hive.dart';
 
 part 'enquiry_model.g.dart';
