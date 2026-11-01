@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/features/catalogue/services/product_services.dart';
 
-import '../models/product_model.dart';
+import '../../products/models/product_model.dart';
 
 class CatalogueController extends GetxController {
   CatalogueController({ProductServices? repository})
@@ -15,7 +15,7 @@ class CatalogueController extends GetxController {
 
   final searchController = TextEditingController();
 
-  static const int pageSize = 8;
+  static const int pageSize = 10;
 
   final categories = [
     'All Gifts',
@@ -50,6 +50,8 @@ class CatalogueController extends GetxController {
 
   RxList<ProductModel> trendingProducts = <ProductModel>[].obs;
   RxList<ProductModel> bannerProducts = <ProductModel>[].obs;
+  RxList<ProductModel> mostRequestedProducts = <ProductModel>[].obs;
+  RxList<ProductModel> topProducts = <ProductModel>[].obs;
 
   final products = <ProductModel>[].obs;
 
@@ -57,13 +59,11 @@ class CatalogueController extends GetxController {
   final selectedOccasions = <String>[].obs;
   final selectedCustomisations = <String>[].obs;
   final selectedBudgetIndex = 0.obs;
-
+  final isDashboardLoading = false.obs;
+  final errorDashboard = false.obs;
   final isLoading = false.obs;
-  final isLoadingMore = false.obs;
-  final hasMore = true.obs;
-  final errorMessage = ''.obs;
+  final error = false.obs;
 
-  int _currentPage = 0;
   Timer? _searchDebounce;
 
   int? get minPrice {
@@ -103,28 +103,39 @@ class CatalogueController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    loadProducts();
-    loadBannerProducts();
+    loadDashBoard();
+    loadTopProducts();
+  }
+
+  Future loadDashBoard() async {
+    try {
+      isDashboardLoading.value = true;
+      errorDashboard.value = false;
+      await Future.wait([
+        loadBannerProducts(),
+        loadMostRequestedProducts(),
+        loadProducts(),
+      ]);
+      isDashboardLoading.value = false;
+      errorDashboard.value = false;
+    } catch (e) {
+      log('Error Dashboard $e');
+      isDashboardLoading.value = false;
+      errorDashboard.value = true;
+    } finally {
+      isDashboardLoading.value = false;
+    }
   }
 
   Future<void> loadProducts({bool reset = true}) async {
-    if (isLoading.value || isLoadingMore.value) return;
+    if (isLoading.value) return;
 
-    if (reset) {
-      _currentPage = 0;
-      hasMore.value = true;
-      products.clear();
-      errorMessage.value = '';
-      isLoading.value = true;
-    } else {
-      if (!hasMore.value) return;
-      isLoadingMore.value = true;
-    }
+    products.clear();
+    error.value = false;
+    isLoading.value = true;
 
     try {
       final result = await _repository.fetchProducts(
-        page: _currentPage,
-        limit: pageSize,
         search: searchController.text.trim(),
         category: selectedCategory.value,
         minPrice: minPrice,
@@ -133,32 +144,20 @@ class CatalogueController extends GetxController {
         customisations: selectedCustomisations.toList(),
       );
 
-      if (reset) {
-        products.assignAll(result);
-      } else {
-        products.addAll(result);
-      }
-      hasMore.value = result.length == pageSize;
+      products.assignAll(result);
 
-      if (hasMore.value) {
-        _currentPage++;
-      }
-    } catch (error) {
-      errorMessage.value = 'Unable to load products. Please try again.';
-      debugPrint('Catalogue error: $error');
+      error.value = false;
+    } catch (e) {
+      error.value = true;
+      debugPrint('Catalogue error: $e');
     } finally {
       isLoading.value = false;
-      isLoadingMore.value = false;
     }
   }
 
   Future<void> loadBannerProducts() async {
     try {
-      final result = await _repository.fetchProducts(
-        page: _currentPage,
-        limit: pageSize,
-        category: 'Drinkware',
-      );
+      final result = await _repository.fetchProducts(category: 'Drinkware');
 
       trendingProducts.value = List.from(result);
 
@@ -168,12 +167,35 @@ class CatalogueController extends GetxController {
             element.imageUrl == null || element.imageUrl?.isEmpty == true,
       );
       log('banner images $bannerProducts');
-    } catch (error) {
-      errorMessage.value = 'Unable to load products. Please try again.';
-      debugPrint('Catalogue error: $error');
-    } finally {
-      isLoading.value = false;
-      isLoadingMore.value = false;
+    } catch (e) {
+      debugPrint('Error load banner products error: $error');
+    }
+  }
+
+  Future<void> loadMostRequestedProducts() async {
+    try {
+      final result = await _repository.fetchProducts(category: 'Apparel');
+
+      mostRequestedProducts.value = List.from(result);
+
+      log('resp banner $mostRequestedProducts');
+      error.value = false;
+    } catch (e) {
+      debugPrint('Erro load most requested products error: $error');
+    }
+  }
+
+  Future<void> loadTopProducts() async {
+    try {
+      final result = await _repository.fetchProducts(
+        category: 'Work Essentials',
+      );
+
+      topProducts.value = List.from(result);
+
+      log('resp top products $products');
+    } catch (e) {
+      debugPrint('Erro load most requested products error: $error');
     }
   }
 

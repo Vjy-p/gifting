@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
+import 'package:gifting/core/widgets/retry_widget.dart';
 import 'package:gifting/features/home/views/widgets/banner_widget.dart';
 import 'package:gifting/features/home/views/widgets/bulk_order_widget.dart';
 import 'package:gifting/features/home/views/widgets/category_screen.dart';
@@ -52,19 +53,55 @@ class DashboardScreen extends GetView<CatalogueController> {
             actionsPadding: const EdgeInsets.only(right: 8),
             actions: [if (isMobile) const ThemeToggleButton()],
           ),
-          body: SingleChildScrollView(
-            child: Column(
-              children: [
-                BannerWidget(isMobile: isMobile),
-                const FeaturesWidget(),
-                const CategoryWidget(),
-                ProductsWidget(controller: controller),
-                const OccasionWidget(occasions: _occasions),
-                HowItWorksWidget(isMobile: isMobile),
-                BulkOrderWidget(isMobile: isMobile),
-                FooterWidget(isMobile: isMobile),
-              ],
-            ),
+          body: RefreshIndicator(
+            onRefresh: () async {
+              await controller.loadDashBoard();
+            },
+            child: Obx(() {
+              return controller.isDashboardLoading.value
+                  ? const Center(child: CircularProgressIndicator())
+                  : controller.errorDashboard.value
+                  ? RetryWidget(
+                      onPressed: () {
+                        controller.loadDashBoard();
+                      },
+                    )
+                  : SingleChildScrollView(
+                      physics: const BouncingScrollPhysics(),
+                      child: Column(
+                        children: [
+                          BannerWidget(isMobile: isMobile),
+                          if (!isMobile) const FeaturesWidget(),
+                          ProductsWidget(
+                            title: 'Most Requested Corporate Gifts',
+                            subTitle: 'Thoughtful products for every business occasion.',
+                            products: controller.mostRequestedProducts,
+                          ),
+                          const CategoryWidget(),
+                          ProductsWidget(
+                            title: 'Trending Gifts',
+                            subTitle: 'Thoughtful products for every business occasion.',
+                            products: controller.trendingProducts,
+                          ),
+                          // ignore: prefer_const_constructors
+                          OccasionWidget(occasions: _occasions),
+                          ProductsWidget(
+                            title: 'Top Gifts',
+                            subTitle: 'Thoughtful products for every business occasion.',
+                            products: controller.topProducts,
+                          ),
+                          ProductsWidget(
+                            title: 'New Gifts',
+                            subTitle: 'Thoughtful products for every business occasion.',
+                            products: controller.bannerProducts,
+                          ),
+                          HowItWorksWidget(isMobile: isMobile),
+                          BulkOrderWidget(isMobile: isMobile),
+                          FooterWidget(isMobile: isMobile),
+                        ],
+                      ),
+                    );
+            }),
           ),
         );
       },

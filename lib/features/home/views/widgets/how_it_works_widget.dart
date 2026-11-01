@@ -20,7 +20,6 @@ class HowItWorksWidget extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final columns = constraints.maxWidth < 700 ? 1 : 3;
-
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
@@ -30,7 +29,7 @@ class HowItWorksWidget extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               childAspectRatio: columns == 1
-                  ? 3
+                  ? 3.5
                   : constraints.maxWidth < 1000
                   ? 1.2
                   : 2,
@@ -39,7 +38,7 @@ class HowItWorksWidget extends StatelessWidget {
               final step = steps[index];
 
               return Container(
-                padding: const EdgeInsets.all(22),
+                padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
                   borderRadius: BorderRadius.circular(12),
@@ -47,27 +46,34 @@ class HowItWorksWidget extends StatelessWidget {
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Text(
                       step.$1,
                       style: TextStyle(
                         color: AppColors.gold,
-                        fontSize: 24,
+                        fontSize: isMobile ? 16 : 24,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 12),
                     Text(
                       step.$2,
                       style: TextStyle(
                         color: AppColors.darkGreen,
-                        fontSize: 17,
+                        fontSize: isMobile ? 14 : 17,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(step.$3, maxLines: 2, overflow: TextOverflow.ellipsis),
+                    Text(
+                      step.$3,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: AppColors.darkGreen,
+                        fontSize: isMobile ? 12 : 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ],
                 ),
               );

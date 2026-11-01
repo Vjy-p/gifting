@@ -1,17 +1,19 @@
 import 'dart:developer';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/services/common_services.dart';
 import 'package:gifting/core/theme/app_colors.dart';
+import 'package:gifting/core/widgets/custom_toast.dart';
 import 'package:gifting/features/catalogue/controllers/catalogue_controller.dart';
 import 'package:gifting/features/enquiries/models/enquiry_model.dart';
 import 'package:gifting/features/enquiries/services/enquiry_services.dart';
 import 'package:gifting/features/enquiries/services/local_services.dart';
 import 'package:intl/intl.dart';
 
-import '../../catalogue/models/product_model.dart';
+import '../../products/models/product_model.dart';
 
 class EnquiryController extends GetxController {
   EnquiryController({
@@ -183,6 +185,28 @@ class EnquiryController extends GetxController {
     }
   }
 
+  void addQuantity(String value) {
+    quantityController.text = value;
+  }
+
+  void addCustomisation(List<String> value) {
+    for (String v in value) {
+      if (customisationOptions.contains(v)) {
+        if (!customisations.contains(v)) {
+          customisations.add(v);
+        } else {
+          customisations.remove(v);
+        }
+      }
+    }
+  }
+
+  void addProduct(ProductModel product) {
+    if (!selectedProducts.any((e) => e.id == product.id)) {
+      selectedProducts.add(product);
+    }
+  }
+
   void removeProduct(ProductModel product) {
     selectedProducts.removeWhere((item) => item.id == product.id);
   }
@@ -218,9 +242,9 @@ class EnquiryController extends GetxController {
     }
 
     if (catalogue.products.isEmpty) {
-      Get.snackbar(
-        'Products unavailable',
-        'Unable to load products. Please try again.',
+      customToast(
+        title: 'Products unavailable',
+        text: 'Unable to load products. Please try again.',
       );
       return;
     }
@@ -232,21 +256,46 @@ class EnquiryController extends GetxController {
         .toList();
 
     if (availableProducts.isEmpty) {
-      Get.snackbar(
-        'All products selected',
-        'There are no additional products to add.',
+      customToast(
+        title: 'All products selected',
+        text: 'There are no additional products to add.',
       );
       return;
     }
 
     final chosen = await Get.dialog<ProductModel>(
       SimpleDialog(
-        constraints: BoxConstraints(maxWidth: Get.width),
+        constraints: const BoxConstraints(maxWidth: 900),
         title: const Text('Add a product'),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadiusGeometry.circular(16),
+        ),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
         children: availableProducts.map((product) {
           return SimpleDialogOption(
             onPressed: () => Get.back(result: product),
             child: ListTile(
+              dense: true,
+              visualDensity: VisualDensity.comfortable,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadiusGeometry.circular(16),
+              ),
+              minLeadingWidth: 40,
+              leading: SizedBox(
+                height: 60,
+                width: 60,
+                child: ClipRRect(
+                  borderRadius: BorderRadiusGeometry.circular(8),
+                  child: CachedNetworkImage(
+                    height: 60,
+                    width: 60,
+                    imageUrl: product.imageUrl ?? '',
+                    fit: BoxFit.cover,
+                    errorWidget: (context, url, error) =>
+                        const Icon(Icons.gif_box, size: 40),
+                  ),
+                ),
+              ),
               title: Text(product.name),
               subtitle: Text(product.priceRange),
               contentPadding: EdgeInsets.zero,
@@ -272,23 +321,35 @@ class EnquiryController extends GetxController {
     if (!(formKey.currentState?.validate() ?? false)) return;
 
     if (selectedProducts.isEmpty) {
-      Get.snackbar('Missing information', 'Please select atleast one product.');
+      customToast(
+        title: 'Missing information',
+        text: 'Please select atleast one product.',
+      );
       return;
     } else if (selectedOccasion.value == null) {
-      Get.snackbar('Missing information', 'Please select occasion.');
+      customToast(
+        title: 'Missing information',
+        text: 'Please select occasion.',
+      );
       return;
     } else if (selectedBudget.value == null) {
-      Get.snackbar('Missing information', 'Please select budget.');
+      customToast(title: 'Missing information', text: 'Please select budget.');
       return;
     } else if (deliveryDate.value == null) {
-      Get.snackbar('Missing information', 'Please select delivery date.');
+      customToast(
+        title: 'Missing information',
+        text: 'Please select delivery date.',
+      );
       return;
     }
 
     final quantity = int.tryParse(quantityController.text.trim());
 
     if (quantity == null || quantity <= 0) {
-      Get.snackbar('Invalid quantity', 'Enter a valid number of units.');
+      customToast(
+        title: 'Invalid quantity',
+        text: 'Enter a valid number of units.',
+      );
       return;
     }
 
@@ -329,9 +390,9 @@ class EnquiryController extends GetxController {
       loadEnquiries();
     } catch (error) {
       log('Error submit form $error');
-      Get.snackbar(
-        'Submission failed',
-        'Your enquiry could not be saved. Please try again.',
+      customToast(
+        title: 'Submission failed',
+        text: 'Your enquiry could not be saved. Please try again.',
       );
     } finally {
       isSubmitting.value = false;

@@ -97,6 +97,7 @@ class EnquiryScreen extends GetView<EnquiryController> {
 
                         return GridView.builder(
                           itemCount: items.length,
+                          physics: const BouncingScrollPhysics(),
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: isMobile

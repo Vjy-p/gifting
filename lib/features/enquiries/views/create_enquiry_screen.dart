@@ -19,10 +19,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Request a Quote'),
-        actions: const [
-          ThemeToggleButton(),
-          SizedBox(width: 8),
-        ],
+        actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
@@ -292,6 +289,16 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                         imageUrl: product.imageUrl ?? '',
                                         width: double.infinity,
                                         fit: BoxFit.cover,
+                                        errorWidget:
+                                            (context, error, stackTrace) {
+                                              return Center(
+                                                child: Icon(
+                                                  Icons.card_giftcard_outlined,
+                                                  size: 42,
+                                                  color: AppColors.primary,
+                                                ),
+                                              );
+                                            },
                                       ),
                                     ),
                                   ),
@@ -324,7 +331,8 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                         ),
                       );
                     },
-                    separatorBuilder: (context, index) => const SizedBox(width: 8),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(width: 8),
                   ),
                 );
               }),
@@ -356,9 +364,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                   if (controller.selectedProducts.isEmpty) {
                     return const Padding(
                       padding: EdgeInsets.only(top: 30),
-                      child: Center(
-                        child: Text('No products selected yet.'),
-                      ),
+                      child: Center(child: Text('No products selected yet.')),
                     );
                   }
                   return Wrap(
@@ -373,7 +379,9 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                 spacing: 10,
                                 children: [
                                   ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 160),
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 160,
+                                    ),
                                     child: AspectRatio(
                                       aspectRatio: 1,
                                       child: ClipRRect(
@@ -382,12 +390,23 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                                         child: CachedNetworkImage(
                                           imageUrl: product.imageUrl ?? '',
                                           fit: BoxFit.cover,
+                                          errorWidget: (context, url, error) {
+                                            return Center(
+                                              child: Icon(
+                                                Icons.card_giftcard_outlined,
+                                                size: 42,
+                                                color: AppColors.primary,
+                                              ),
+                                            );
+                                          },
                                         ),
                                       ),
                                     ),
                                   ),
                                   ConstrainedBox(
-                                    constraints: const BoxConstraints(maxWidth: 160),
+                                    constraints: const BoxConstraints(
+                                      maxWidth: 160,
+                                    ),
                                     child: Padding(
                                       padding: const EdgeInsets.all(8.0),
                                       child: Text(

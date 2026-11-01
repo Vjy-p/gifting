@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/theme/app_colors.dart';
-import 'package:gifting/features/catalogue/models/product_model.dart';
+import 'package:gifting/features/products/models/product_model.dart';
 
 import '../../../catalogue/controllers/catalogue_controller.dart';
 
@@ -21,36 +21,38 @@ class BannerWidget extends GetView<CatalogueController> {
         final content = Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'CORPORATE GIFTING',
-              style: TextStyle(
-                color: AppColors.primary,
-                letterSpacing: 2,
-                fontSize: 11,
-                fontWeight: FontWeight.w700,
+            if (!isMobile) ...[
+              Text(
+                'CORPORATE GIFTING',
+                style: TextStyle(
+                  color: AppColors.primary,
+                  letterSpacing: 2,
+                  fontSize: isMobile ? 11 : 16,
+                  fontWeight: FontWeight.w700,
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Thoughtful Gifts.\nStronger Business\nRelationships.',
-              style: TextStyle(
-                color: AppColors.darkGreen,
-                fontSize: isMobile ? 26 : 50,
-                height: 1.15,
-                fontWeight: FontWeight.w500,
+              const SizedBox(height: 18),
+              Text(
+                'Thoughtful Gifts.\nStronger Business\nRelationships.',
+                style: TextStyle(
+                  color: AppColors.darkGreen,
+                  fontSize: isMobile ? 26 : 50,
+                  height: 1.15,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-            const SizedBox(height: 18),
-            Text(
-              'Personalised corporate gifts for teams, clients '
-              'and partners, thoughtfully curated for every occasion.',
-              style: TextStyle(
-                fontSize: isMobile ? 14 : 16,
-                height: 1.7,
-                color: AppColors.secondaryText,
+              const SizedBox(height: 18),
+              Text(
+                'Personalised corporate gifts for teams, clients '
+                'and partners, thoughtfully curated for every occasion.',
+                style: TextStyle(
+                  fontSize: isMobile ? 14 : 16,
+                  height: 1.7,
+                  color: AppColors.secondaryText,
+                ),
               ),
-            ),
-            const SizedBox(height: 26),
+              const SizedBox(height: 26),
+            ],
             Wrap(
               spacing: 12,
               runSpacing: 12,
@@ -83,7 +85,9 @@ class BannerWidget extends GetView<CatalogueController> {
               child: controller.bannerProducts.isEmpty
                   ? emptyBanner(context)
                   : BannerCarousel(
-                      products: controller.bannerProducts,
+                      products: controller.bannerProducts.length > 5
+                          ? controller.bannerProducts.sublist(0, 4)
+                          : controller.bannerProducts,
                       height: isMobile ? 200 : 420,
                     ),
             ),
@@ -259,6 +263,7 @@ class _BannerCarouselState extends State<BannerCarousel> {
         borderRadius: BorderRadius.circular(16),
         color: Theme.of(context).colorScheme.secondaryContainer,
       ),
+      clipBehavior: Clip.antiAlias,
       child: Column(
         spacing: 8,
         mainAxisAlignment: MainAxisAlignment.center,

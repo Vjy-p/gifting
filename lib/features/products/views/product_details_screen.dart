@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -60,7 +62,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     );
   }
 
-  Widget productImage(context) {
+  Widget productImage(BuildContext context) {
     final String imageUrl = controller.product.imageUrl ?? '';
     if (imageUrl.isEmpty) {
       return Center(
@@ -198,7 +200,7 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
               Get.toNamed(
                 AppRoutes.createEnquiry,
                 arguments: {
-                  'product': controller.product,
+                  'product': jsonEncode(controller.product),
                   'quantity': controller.quantity.value,
                   'customisations': controller.customisations.toList(),
                 },

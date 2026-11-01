@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:gifting/core/theme/app_colors.dart';
-import 'package:gifting/features/catalogue/models/product_model.dart';
+import 'package:gifting/features/products/models/product_model.dart';
 
 class ProductTile extends StatelessWidget {
   const ProductTile({super.key, required this.product, this.onTap});
@@ -50,7 +50,7 @@ class ProductTile extends StatelessWidget {
                     ),
                     Text(
                       product.name,
-                      maxLines: 2,
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         color: AppColors.text,
@@ -68,6 +68,10 @@ class ProductTile extends StatelessWidget {
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
+                        style: const ButtonStyle(
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                        ),
                         onPressed: onTap,
                         child: const Text('View Details'),
                       ),
@@ -92,6 +96,7 @@ class ProductTile extends StatelessWidget {
     return CachedNetworkImage(
       imageUrl: imageUrl,
       fit: BoxFit.cover,
+      height: double.infinity,
       width: double.infinity,
       errorWidget: (context, error, stackTrace) {
         return Center(

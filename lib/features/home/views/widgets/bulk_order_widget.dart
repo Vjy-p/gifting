@@ -9,7 +9,10 @@ class BulkOrderWidget extends StatelessWidget {
     return Container(
       width: double.infinity,
       margin: const EdgeInsets.symmetric(vertical: 24),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 56),
+      padding: EdgeInsets.symmetric(
+        horizontal: isMobile ? 16 : 24,
+        vertical: isMobile ? 20 : 56,
+      ),
       color: Theme.of(context).colorScheme.surface,
       child: Column(
         children: [

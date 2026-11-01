@@ -1,11 +1,15 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:get/get.dart';
 import 'package:gifting/features/catalogue/views/catalogue_screen.dart';
 import 'package:gifting/features/enquiries/controllers/enquiry_controller.dart';
 import 'package:gifting/features/enquiries/views/create_enquiry_screen.dart';
 import 'package:gifting/features/enquiries/views/enquiry_screen.dart';
 import 'package:gifting/features/home/views/home_screen.dart';
-import 'package:gifting/features/product_details/controllers/product_details_controller.dart';
-import 'package:gifting/features/product_details/views/product_details_screen.dart';
+import 'package:gifting/features/products/controllers/product_details_controller.dart';
+import 'package:gifting/features/products/models/product_model.dart';
+import 'package:gifting/features/products/views/product_details_screen.dart';
 
 import '../../features/catalogue/controllers/catalogue_controller.dart';
 import 'app_routes.dart';
@@ -46,7 +50,7 @@ class AppPages {
         final args = Get.arguments == null
             ? null
             : Get.arguments as Map<String, dynamic>;
-
+        log('args $args');
         Get.lazyPut<EnquiryController>(
           () => EnquiryController(
             initialProduct: args?['product'],
@@ -56,6 +60,18 @@ class AppPages {
             ),
           ),
         );
+        final controller = Get.find<EnquiryController>();
+        if (args?['product'] != null) {
+          controller.addProduct(
+            ProductModel.fromJson(jsonDecode(args?['product'])),
+          );
+        }
+        if (args?['quantity'] != null) {
+          controller.addQuantity(args?['quantity']?.toString() ?? '100');
+        }
+        if (args?['customisations'] != null) {
+          controller.addCustomisation(args?['customisations'] ?? []);
+        }
       }),
     ),
     GetPage(

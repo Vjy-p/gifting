@@ -1,7 +1,7 @@
 import 'dart:developer';
 
-import 'package:get/get.dart';
-import 'package:gifting/features/catalogue/models/product_model.dart';
+import 'package:gifting/core/widgets/custom_toast.dart';
+import 'package:gifting/features/products/models/product_model.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class CommonServices {
@@ -12,34 +12,77 @@ class CommonServices {
     required List<ProductModel> products,
     String? qunatity,
   }) async {
-    String mobileNumber = (code + phone).replaceAll(RegExp(r'[^0-9]'), '');
+    try {
+      final mobileNumber = (code + phone).replaceAll(RegExp(r'[^0-9]'), '');
 
-    String message = 'Hello, I am interested in this product\n';
-    if (referenceCode != null) message += '\nReference : $referenceCode';
+      var message = 'Hello, I am interested in this product\n';
+      if (referenceCode != null && referenceCode.isNotEmpty) {
+        message += '\nReference : $referenceCode';
+      }
 
-    for (ProductModel p in products) {
-      message += '\nName : ${p.name}\nPrice : ${p.priceRange}';
-    }
+      for (final p in products) {
+        message += '\nName : ${p.name}\nPrice : ${p.priceRange}';
+      }
 
-    message += '\n\nPlease share more details';
+      if (qunatity != null && qunatity.isNotEmpty) {
+        message += '\nQuantity : $qunatity';
+      }
 
-    final encodedMessage = Uri.encodeComponent(message);
+      message += '\n\nPlease share more details';
 
-    log(
-      "WhatsApp number: $mobileNumber'https://wa.me/$mobileNumber?text=$encodedMessage'",
-    );
+      final encodedMessage = Uri.encodeComponent(message);
 
-    final url = Uri.parse('https://wa.me/$mobileNumber?text=$encodedMessage');
-
-    if (await canLaunchUrl(url)) {
-      await launchUrl(url, mode: LaunchMode.externalApplication);
-    } else {
-      Get.snackbar(
-        'Unable to open WhatsApp',
-        'Please try again or use the enquiry form.',
+      // Direct WhatsApp scheme (opens app directly if installed)
+      final nativeUri = Uri.parse(
+        'whatsapp://send?phone=$mobileNumber&text=$encodedMessage',
+      );
+      // Web fallback link (wa.me)
+      final webUri = Uri.parse(
+        'https://wa.me/$mobileNumber?text=$encodedMessage',
       );
 
-      throw 'Could not open WhatsApp';
+      bool launched = false;
+
+      // 1. Try launching native WhatsApp app
+      if (await canLaunchUrl(nativeUri)) {
+        launched = await launchUrl(
+          nativeUri,
+          mode: LaunchMode.externalApplication,
+        );
+      }
+
+      // 2. If native app didn't launch, try web link
+      if (!launched) {
+        if (await canLaunchUrl(webUri)) {
+          launched = await launchUrl(
+            webUri,
+            mode: LaunchMode.externalApplication,
+          );
+        } else {
+          // In case canLaunchUrl returned false due to package visibility restrictions
+          try {
+            launched = await launchUrl(
+              webUri,
+              mode: LaunchMode.externalApplication,
+            );
+          } catch (_) {
+            launched = false;
+          }
+        }
+      }
+
+      if (!launched) {
+        customToast(
+          title: 'Unable to open WhatsApp',
+          text: 'Please install WhatsApp or use the enquiry form.',
+        );
+      }
+    } catch (e, stackTree) {
+      customToast(
+        title: 'Unable to open WhatsApp',
+        text: 'Please try again or use the enquiry form.',
+      );
+      log('Error whatsapp $e ,$stackTree');
     }
   }
 }

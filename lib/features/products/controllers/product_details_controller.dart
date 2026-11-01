@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../catalogue/models/product_model.dart';
+import '../models/product_model.dart';
 
 class ProductDetailsController extends GetxController {
   ProductDetailsController({required this.product});
