@@ -13,14 +13,14 @@ class EnquiryTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
       ),
       child: Column(
-        spacing: 8,
+        spacing: 6,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
@@ -48,14 +48,32 @@ class EnquiryTile extends StatelessWidget {
           ),
           Text(
             enquiry.company,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
           ),
-          Text('Occasion: ${enquiry.occasion}'),
-          Text('Quantity: ${enquiry.quantity} units'),
-          Text('Products: ${enquiry.products.length}'),
-          if (enquiry.customisations.isEmpty)
-            Text('Customisations: ${enquiry.customisations.join(", ")}'),
-          const Divider(),
+          Text(
+            'Occasion: ${enquiry.occasion}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            'Quantity: ${enquiry.quantity} units',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          Text(
+            'Products: ${enquiry.products.length}',
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+          ),
+          // if (enquiry.customisations.isEmpty)
+          //   Text(
+          //     'Customisations: ${enquiry.customisations.join(", ")}',
+          //     maxLines: 1,
+          //     overflow: TextOverflow.ellipsis,
+          //   ),
+          const Divider(height: 6),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -64,6 +82,10 @@ class EnquiryTile extends StatelessWidget {
                 style: TextStyle(color: AppColors.secondaryText, fontSize: 12),
               ),
               TextButton(
+                style: const ButtonStyle(
+                  visualDensity: VisualDensity.compact,
+                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                ),
                 onPressed: () {
                   Get.dialog(
                     barrierColor: AppColors.isDark

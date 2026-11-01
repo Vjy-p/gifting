@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:gifting/app/routes/app_routes.dart';
 
 class BulkOrderWidget extends StatelessWidget {
   const BulkOrderWidget({super.key, required this.isMobile});
@@ -33,7 +35,9 @@ class BulkOrderWidget extends StatelessWidget {
           ),
           const SizedBox(height: 24),
           ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              Get.toNamed(AppRoutes.createEnquiry);
+            },
             child: const Text('Request a Bulk Quote'),
           ),
         ],

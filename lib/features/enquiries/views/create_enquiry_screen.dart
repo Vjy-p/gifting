@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
@@ -6,11 +7,79 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
+import 'package:gifting/core/widgets/custom_toast.dart';
+import 'package:gifting/features/enquiries/controllers/enquiry_controller.dart';
+import 'package:gifting/features/products/models/product_model.dart';
+import 'package:intl/intl.dart';
 
-import '../controllers/enquiry_controller.dart';
-
-class CreateEnquiryScreen extends GetView<EnquiryController> {
+class CreateEnquiryScreen extends StatefulWidget {
   const CreateEnquiryScreen({super.key});
+
+  @override
+  State<CreateEnquiryScreen> createState() => _CreateEnquiryScreenState();
+}
+
+class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
+  final controller = Get.find<EnquiryController>();
+
+  final formKey = GlobalKey<FormState>();
+
+  final nameController = TextEditingController();
+  final nameFocus = FocusNode();
+  final companyController = TextEditingController();
+  final companyFocus = FocusNode();
+  final phoneController = TextEditingController();
+  final phoneFocus = FocusNode();
+  final emailController = TextEditingController();
+  final emailFocus = FocusNode();
+  final quantityController = TextEditingController();
+  final quantityFocus = FocusNode();
+  final messageController = TextEditingController();
+  final messageFocus = FocusNode();
+  final deliveryDateController = TextEditingController();
+  final deliveryDateFocus = FocusNode();
+
+  DateTime? deliveryDate;
+
+  @override
+  void initState() {
+    super.initState();
+    initialise();
+  }
+
+  void initialise() {
+    final args = Get.arguments;
+    log('args $args');
+    if (args?['product'] != null) {
+      controller.addProduct(
+        ProductModel.fromJson(jsonDecode(args?['product'])),
+      );
+    }
+
+    if (args?['customisations'] != null) {
+      controller.addCustomisation(args?['customisations'] ?? []);
+    }
+  }
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    companyController.dispose();
+    phoneController.dispose();
+    emailController.dispose();
+    quantityController.dispose();
+    messageController.dispose();
+    nameFocus.dispose();
+    companyFocus.dispose();
+    phoneFocus.dispose();
+    emailFocus.dispose();
+    quantityFocus.dispose();
+    messageFocus.dispose();
+    deliveryDateController.dispose();
+    deliveryDateFocus.dispose();
+    if (mounted) controller.clearData();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +94,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
         padding: const EdgeInsets.all(24),
         child: Center(
           child: Form(
-            key: controller.formKey,
+            key: formKey,
             child: Row(
               spacing: 20,
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -52,36 +121,36 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                       _sectionTitle('Your details'),
                       _responsiveFields(context, [
                         _textField(
-                          controller.nameController,
+                          nameController,
                           'Full name',
                           validator: controller.validateRequired,
-                          focusNode: controller.nameFocus,
-                          nextNode: controller.companyFocus,
+                          focusNode: nameFocus,
+                          nextNode: companyFocus,
                         ),
                         _textField(
-                          controller.companyController,
+                          companyController,
                           'Company name',
                           validator: controller.validateRequired,
-                          focusNode: controller.companyFocus,
-                          nextNode: controller.phoneFocus,
+                          focusNode: companyFocus,
+                          nextNode: phoneFocus,
                         ),
                         _textField(
-                          controller.phoneController,
+                          phoneController,
                           'Phone number',
                           hint: '+91 9876543210',
                           keyboardType: TextInputType.phone,
                           validator: controller.validatePhone,
-                          focusNode: controller.phoneFocus,
-                          nextNode: controller.emailFocus,
+                          focusNode: phoneFocus,
+                          nextNode: emailFocus,
                           isMobile: true,
                         ),
                         _textField(
-                          controller.emailController,
+                          emailController,
                           'Email address',
                           keyboardType: TextInputType.emailAddress,
                           validator: controller.validateEmail,
-                          focusNode: controller.emailFocus,
-                          // nextNode: controller.companyFocus,
+                          focusNode: emailFocus,
+                          // nextNode: companyFocus,
                         ),
                       ]),
                       const SizedBox(height: 28),
@@ -109,11 +178,11 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                           ),
                         ),
                         _textField(
-                          controller.quantityController,
+                          quantityController,
                           'Number of units',
                           keyboardType: TextInputType.number,
                           validator: controller.validateQuantity,
-                          focusNode: controller.quantityFocus,
+                          focusNode: quantityFocus,
                         ),
                         Obx(
                           () => DropdownButtonFormField<String>(
@@ -137,12 +206,12 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                           ),
                         ),
                         TextFormField(
-                          // initialValue: controller.deliveryDate.value != null
+                          // initialValue: deliveryDate.value != null
                           //     ? DateFormat('dd MMM yyyy')
-                          //           .format(controller.deliveryDate.value!)
+                          //           .format(deliveryDate.value!)
                           //     : 'Choose delivery date',
-                          controller: controller.deliveryDateController,
-                          focusNode: controller.deliveryDateFocus,
+                          controller: deliveryDateController,
+                          focusNode: deliveryDateFocus,
                           readOnly: true,
                           decoration: const InputDecoration(
                             label: Text('Choose delivery date'),
@@ -152,11 +221,17 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                             ),
                           ),
 
-                          onTap: () {
-                            controller.pickDeliveryDate(context);
+                          onTap: () async {
+                            DateTime? resp = await pickDeliveryDate(context);
+                            if (resp != null) {
+                              deliveryDateController.text = DateFormat(
+                                'dd MMM yyyy',
+                              ).format(resp);
+                              setState(() {});
+                            }
                           },
                           onChanged: (value) {
-                            // controller.pickDeliveryDate(context);
+                            // pickDeliveryDate(context);
                           },
                           validator: (value) =>
                               value == null ? 'Select a delivery date' : null,
@@ -176,10 +251,7 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                               controlAffinity: ListTileControlAffinity.leading,
                               activeColor: AppColors.primary,
                               onChanged: (selected) {
-                                controller.toggleCustomisation(
-                                  option,
-                                  selected ?? false,
-                                );
+                                controller.toggleCustomisation(option);
                               },
                             );
                           }).toList(),
@@ -187,10 +259,10 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                       ),
                       const SizedBox(height: 20),
                       _textField(
-                        controller.messageController,
+                        messageController,
                         'Additional message (optional)',
                         maxLines: 4,
-                        focusNode: controller.messageFocus,
+                        focusNode: messageFocus,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -207,7 +279,28 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
                           child: ElevatedButton(
                             onPressed: controller.isSubmitting.value
                                 ? null
-                                : controller.submitForm,
+                                : () {
+                                    if (formKey.currentState?.validate() ==
+                                            true &&
+                                        deliveryDate != null) {
+                                      controller.submitForm(
+                                        name: nameController.text,
+                                        company: companyController.text,
+                                        number: phoneController.text,
+                                        email: emailController.text,
+                                        date: deliveryDate!,
+                                        quantity: quantityController.text,
+                                        message: messageController.text,
+                                      );
+                                    } else {
+                                      if (deliveryDate == null) {
+                                        customToast(
+                                          title: 'Missing information',
+                                          text: 'Please select delivery date.',
+                                        );
+                                      }
+                                    }
+                                  },
                             child: controller.isSubmitting.value
                                 ? const SizedBox(
                                     width: 20,
@@ -502,29 +595,47 @@ class CreateEnquiryScreen extends GetView<EnquiryController> {
         counterText: '',
       ),
       onFieldSubmitted: (value) {
-        controller.fieldFocusChange(
-          currentFocus: focusNode,
-          nextFocus: nextNode,
-        );
+        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
       },
       onEditingComplete: () {
-        controller.fieldFocusChange(
-          currentFocus: focusNode,
-          nextFocus: nextNode,
-        );
+        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
       },
       onSaved: (newValue) {
-        controller.fieldFocusChange(
-          currentFocus: focusNode,
-          nextFocus: nextNode,
-        );
+        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
       },
       onTapOutside: (event) {
-        controller.fieldFocusChange(
-          currentFocus: focusNode,
-          nextFocus: nextNode,
-        );
+        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
       },
     );
+  }
+
+  Future<DateTime?> pickDeliveryDate(BuildContext context) async {
+    final now = DateTime.now();
+    final initial = deliveryDate ?? now.add(const Duration(days: 14));
+
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial.isBefore(now) ? now : initial,
+      firstDate: DateTime(now.year, now.month, now.day),
+      lastDate: DateTime(now.year + 5),
+    );
+
+    if (picked != null) {
+      deliveryDate = picked;
+      log('picked delivery date $deliveryDate');
+      return picked;
+    } else {
+      return null;
+    }
+  }
+
+  void fieldFocusChange({
+    required FocusNode currentFocus,
+    FocusNode? nextFocus,
+  }) {
+    currentFocus.unfocus();
+    if (nextFocus != null) {
+      nextFocus.requestFocus();
+    }
   }
 }

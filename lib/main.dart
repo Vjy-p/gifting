@@ -6,6 +6,7 @@ import 'package:gifting/app/routes/app_pages.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/constants/constants.dart';
 import 'package:gifting/core/services/hive_services.dart';
+import 'package:gifting/core/services/initial_bindings.dart';
 import 'package:gifting/core/theme/app_theme.dart';
 import 'package:gifting/core/theme/theme_controller.dart';
 import 'package:gifting/core/widgets/restart_widget.dart';
@@ -37,12 +38,12 @@ class MyApp extends StatelessWidget {
       () => GetMaterialApp(
         title: 'Gifting',
         debugShowCheckedModeBanner: false,
-
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeController.themeMode,
         initialRoute: AppRoutes.home,
         getPages: AppPages.pages,
+        initialBinding: InitialBinding(),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
             PointerDeviceKind.mouse,
