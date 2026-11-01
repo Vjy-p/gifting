@@ -56,7 +56,7 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
               ),
               textFieldWidget(
                 label: 'Customisation',
-                value: enquiry.customisations.join(', ') * 10,
+                value: enquiry.customisations.join(', '),
               ),
               textFieldWidget(
                 label: 'Additional message',
@@ -172,7 +172,8 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
                       ),
                     );
                   },
-                  separatorBuilder: (context, index) => const SizedBox(width: 8),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(width: 8),
                 ),
               ),
       ],

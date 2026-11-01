@@ -11,51 +11,18 @@ import 'package:gifting/features/catalogue/controllers/catalogue_controller.dart
 import 'package:gifting/features/enquiries/models/enquiry_model.dart';
 import 'package:gifting/features/enquiries/services/enquiry_services.dart';
 import 'package:gifting/features/enquiries/services/local_services.dart';
-import 'package:intl/intl.dart';
 
 import '../../products/models/product_model.dart';
 
 class EnquiryController extends GetxController {
-  EnquiryController({
-    ProductModel? initialProduct,
-    int? initialQuantity,
-    List<String>? initialCustomisations,
-  }) {
-    if (initialProduct != null) selectedProducts.add(initialProduct);
-    if (initialQuantity != null) {
-      quantityController.text = initialQuantity.toString();
-    }
-    if (initialCustomisations != null) {
-      customisations.assignAll(initialCustomisations);
-    }
-  }
-
   final EnquiryServices enquiryServices = EnquiryServices();
   final localEnquiryServices = LocalEnquiryServices();
-
-  final formKey = GlobalKey<FormState>();
-
-  final nameController = TextEditingController();
-  final nameFocus = FocusNode();
-  final companyController = TextEditingController();
-  final companyFocus = FocusNode();
-  final phoneController = TextEditingController();
-  final phoneFocus = FocusNode();
-  final emailController = TextEditingController();
-  final emailFocus = FocusNode();
-  final quantityController = TextEditingController();
-  final quantityFocus = FocusNode();
-  final messageController = TextEditingController();
-  final messageFocus = FocusNode();
-  final deliveryDateController = TextEditingController();
-  final deliveryDateFocus = FocusNode();
 
   final selectedProducts = <ProductModel>[].obs;
   final customisations = <String>[].obs;
 
   final selectedOccasion = RxnString();
   final selectedBudget = RxnString();
-  final deliveryDate = Rxn<DateTime>();
 
   final isSubmitting = false.obs;
 
@@ -89,25 +56,6 @@ class EnquiryController extends GetxController {
   void onInit() {
     loadEnquiries();
     super.onInit();
-  }
-
-  @override
-  void onClose() {
-    nameController.dispose();
-    companyController.dispose();
-    phoneController.dispose();
-    emailController.dispose();
-    quantityController.dispose();
-    messageController.dispose();
-    nameFocus.dispose();
-    companyFocus.dispose();
-    phoneFocus.dispose();
-    emailFocus.dispose();
-    quantityFocus.dispose();
-    messageFocus.dispose();
-    deliveryDateController.dispose();
-    deliveryDateFocus.dispose();
-    super.onClose();
   }
 
   String? validateRequired(String? value) {
@@ -165,28 +113,12 @@ class EnquiryController extends GetxController {
     selectedBudget.value = value;
   }
 
-  void fieldFocusChange({
-    required FocusNode currentFocus,
-    FocusNode? nextFocus,
-  }) {
-    currentFocus.unfocus();
-    if (nextFocus != null) {
-      nextFocus.requestFocus();
-    }
-  }
-
-  void toggleCustomisation(String option, bool selected) {
-    if (selected) {
-      if (!customisations.contains(option)) {
-        customisations.add(option);
-      }
-    } else {
+  void toggleCustomisation(String option) {
+    if (customisations.contains(option)) {
       customisations.remove(option);
+    } else {
+      customisations.add(option);
     }
-  }
-
-  void addQuantity(String value) {
-    quantityController.text = value;
   }
 
   void addCustomisation(List<String> value) {
@@ -209,25 +141,6 @@ class EnquiryController extends GetxController {
 
   void removeProduct(ProductModel product) {
     selectedProducts.removeWhere((item) => item.id == product.id);
-  }
-
-  Future<void> pickDeliveryDate(BuildContext context) async {
-    final now = DateTime.now();
-    final initial = deliveryDate.value ?? now.add(const Duration(days: 14));
-
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initial.isBefore(now) ? now : initial,
-      firstDate: DateTime(now.year, now.month, now.day),
-      lastDate: DateTime(now.year + 5),
-    );
-
-    if (picked != null) {
-      deliveryDate.value = picked;
-      deliveryDateController.text = DateFormat('dd MMM yyyy').format(picked);
-      deliveryDate.refresh();
-      log('picked delivery date ${deliveryDate.value}');
-    }
   }
 
   Future<void> addProducts() async {
@@ -315,10 +228,16 @@ class EnquiryController extends GetxController {
     selectedProducts.removeWhere((item) => item.id == product.id);
   }
 
-  Future<void> submitForm() async {
+  Future<void> submitForm({
+    required String name,
+    required String company,
+    required String number,
+    required email,
+    required DateTime date,
+    required String quantity,
+    required String? message,
+  }) async {
     if (isSubmitting.value) return;
-
-    if (!(formKey.currentState?.validate() ?? false)) return;
 
     if (selectedProducts.isEmpty) {
       customToast(
@@ -335,17 +254,11 @@ class EnquiryController extends GetxController {
     } else if (selectedBudget.value == null) {
       customToast(title: 'Missing information', text: 'Please select budget.');
       return;
-    } else if (deliveryDate.value == null) {
-      customToast(
-        title: 'Missing information',
-        text: 'Please select delivery date.',
-      );
-      return;
     }
 
-    final quantity = int.tryParse(quantityController.text.trim());
+    final quantity0 = int.tryParse(quantity.trim());
 
-    if (quantity == null || quantity <= 0) {
+    if (quantity0 == null || quantity0 <= 0) {
       customToast(
         title: 'Invalid quantity',
         text: 'Enter a valid number of units.',
@@ -354,17 +267,17 @@ class EnquiryController extends GetxController {
     }
 
     EnquiryModel enquiry = EnquiryModel(
-      name: nameController.text.trim(),
-      company: companyController.text.trim(),
-      phone: phoneController.text.trim(),
-      email: emailController.text.trim(),
+      name: name.trim(),
+      company: company.trim(),
+      phone: number.trim(),
+      email: email.trim(),
       occasion: selectedOccasion.value!,
-      quantity: quantity,
+      quantity: quantity0,
       budget: selectedBudget.value!,
-      deliveryDate: deliveryDate.value!,
+      deliveryDate: date,
       products: selectedProducts.toList(),
       customisations: customisations.toList(),
-      message: messageController.text.trim(),
+      message: message?.trim() ?? '',
       source: GetPlatform.isWeb
           ? 'website'
           : GetPlatform.isIOS
@@ -373,6 +286,7 @@ class EnquiryController extends GetxController {
           ? 'android'
           : 'none',
     );
+    log('new enquiry ${enquiry.toJson()}');
 
     try {
       isSubmitting.value = true;
@@ -387,6 +301,7 @@ class EnquiryController extends GetxController {
 
       openThankyouAlertBox(enquiry: enquiry, referenceCode: reference);
       await localEnquiryServices.saveEnquiry(enquiry);
+      clearData();
       loadEnquiries();
     } catch (error) {
       log('Error submit form $error');
@@ -397,6 +312,13 @@ class EnquiryController extends GetxController {
     } finally {
       isSubmitting.value = false;
     }
+  }
+
+  void clearData() {
+    selectedProducts.clear();
+    selectedBudget.value = null;
+    selectedOccasion.value = null;
+    customisations.clear();
   }
 
   Future<void> loadEnquiries() async {
