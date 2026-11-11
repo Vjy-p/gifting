@@ -14,17 +14,19 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  await HiveService.init();
-
-  await Supabase.initialize(
-    url: Constants.supabaseUrl,
-    publishableKey: Constants.supbasePublishableKey,
-  );
-
-  Get.put(ThemeController(), permanent: true);
-
+  await initialise();
   runApp(const RestartWidget(child: MyApp()));
+}
+
+Future initialise() async {
+  await Future.wait([
+    HiveService.init(),
+    Supabase.initialize(
+      url: Constants.supabaseUrl,
+      publishableKey: Constants.supbasePublishableKey,
+    ),
+  ]);
+  Get.put(ThemeController(), permanent: true);
 }
 
 class MyApp extends StatelessWidget {
@@ -41,9 +43,11 @@ class MyApp extends StatelessWidget {
         theme: AppTheme.lightTheme,
         darkTheme: AppTheme.darkTheme,
         themeMode: themeController.themeMode,
-        initialRoute: AppRoutes.home,
+        initialRoute: AppRoutes.landingPage,
         getPages: AppPages.pages,
         initialBinding: InitialBinding(),
+        defaultTransition: Transition.fadeIn,
+        transitionDuration: const Duration(milliseconds: 300),
         scrollBehavior: const MaterialScrollBehavior().copyWith(
           dragDevices: {
             PointerDeviceKind.mouse,

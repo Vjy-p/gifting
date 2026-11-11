@@ -36,30 +36,26 @@ class WebFilterWidget extends StatelessWidget {
                 ),
               ],
             ),
-
             const SizedBox(height: 20),
-
             _sectionTitle('Category'),
-
             ...controller.categories.map(
-              (category) => RadioListTile<String>(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                title: Text(category),
-                value: category,
+              (category) => RadioGroup(
                 groupValue: controller.selectedCategory.value,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectCategory(value);
                   }
                 },
+                child: RadioListTile<String>(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: Text(category),
+                  value: category,
+                ),
               ),
             ),
-
             const Divider(height: 30),
-
             _sectionTitle('Occasions'),
-
             ...controller.occasionsList.map(
               (occasion) => CheckboxListTile(
                 contentPadding: EdgeInsets.zero,
@@ -72,31 +68,27 @@ class WebFilterWidget extends StatelessWidget {
                 },
               ),
             ),
-
             const Divider(height: 30),
-
             _sectionTitle('Price range'),
-
             ...List.generate(
               controller.budgetOptions.length,
-              (index) => RadioListTile<int>(
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-                title: Text(controller.budgetOptions[index]),
-                value: index,
+              (index) => RadioGroup(
                 groupValue: controller.selectedBudgetIndex.value,
                 onChanged: (value) {
                   if (value != null) {
                     controller.selectBudget(value);
                   }
                 },
+                child: RadioListTile<int>(
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                  title: Text(controller.budgetOptions[index]),
+                  value: index,
+                ),
               ),
             ),
-
             const Divider(height: 30),
-
             _sectionTitle('Customisation'),
-
             ...controller.customisationOptions.map(
               (customisation) => CheckboxListTile(
                 contentPadding: EdgeInsets.zero,

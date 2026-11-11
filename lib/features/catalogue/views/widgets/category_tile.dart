@@ -17,45 +17,57 @@ class CategoryTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: AppColors.border, width: 1),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(18),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Container(
-                height: 72,
-                width: 72,
+                height: 60,
+                width: 60,
                 decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(10),
+                  color: AppColors.sage,
+                  borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(icon, size: 34, color: AppColors.primary),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.w600,
-                  color: AppColors.text,
+                child: Center(
+                  child: Icon(icon, size: 28, color: AppColors.primary),
                 ),
               ),
-              const SizedBox(height: 8),
-              Row(
+              const SizedBox(height: 14),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Explore',
+                    title,
                     style: TextStyle(
-                      color: AppColors.primary,
+                      fontSize: 16,
                       fontWeight: FontWeight.w600,
+                      color: AppColors.text,
                     ),
                   ),
-                  const SizedBox(width: 6),
-                  Icon(Icons.arrow_forward, size: 16, color: AppColors.primary),
+                  const SizedBox(height: 6),
+                  Row(
+                    children: [
+                      Text(
+                        'Explore',
+                        style: TextStyle(
+                          color: AppColors.primary,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                        ),
+                      ),
+                      const SizedBox(width: 4),
+                      Icon(Icons.arrow_forward_rounded, size: 14, color: AppColors.primary),
+                    ],
+                  ),
                 ],
               ),
             ],

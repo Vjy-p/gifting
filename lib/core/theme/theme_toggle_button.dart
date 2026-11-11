@@ -54,12 +54,23 @@ class ThemeToggleButton extends StatelessWidget {
           content: Obx(
             () => Column(
               mainAxisSize: MainAxisSize.min,
+              spacing: 4,
               children: [
                 ListTile(
-                  leading: const Icon(Icons.light_mode_outlined),
-                  title: const Text('Light'),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  tileColor: controller.themeMode == ThemeMode.light ? AppColors.sage : null,
+                  leading: Icon(
+                    Icons.light_mode_outlined,
+                    color: controller.themeMode == ThemeMode.light ? AppColors.primary : null,
+                  ),
+                  title: Text(
+                    'Light Mode',
+                    style: TextStyle(
+                      fontWeight: controller.themeMode == ThemeMode.light ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
                   trailing: controller.themeMode == ThemeMode.light
-                      ? Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(Icons.check_circle_rounded, color: AppColors.primary)
                       : null,
                   onTap: () {
                     controller.setThemeMode(ThemeMode.light);
@@ -67,10 +78,20 @@ class ThemeToggleButton extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.dark_mode_outlined),
-                  title: const Text('Dark'),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  tileColor: controller.themeMode == ThemeMode.dark ? AppColors.sage : null,
+                  leading: Icon(
+                    Icons.dark_mode_outlined,
+                    color: controller.themeMode == ThemeMode.dark ? AppColors.primary : null,
+                  ),
+                  title: Text(
+                    'Dark Mode',
+                    style: TextStyle(
+                      fontWeight: controller.themeMode == ThemeMode.dark ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
                   trailing: controller.themeMode == ThemeMode.dark
-                      ? Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(Icons.check_circle_rounded, color: AppColors.primary)
                       : null,
                   onTap: () {
                     controller.setThemeMode(ThemeMode.dark);
@@ -78,10 +99,20 @@ class ThemeToggleButton extends StatelessWidget {
                   },
                 ),
                 ListTile(
-                  leading: const Icon(Icons.settings_brightness_outlined),
-                  title: const Text('System Default'),
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                  tileColor: controller.themeMode == ThemeMode.system ? AppColors.sage : null,
+                  leading: Icon(
+                    Icons.settings_brightness_outlined,
+                    color: controller.themeMode == ThemeMode.system ? AppColors.primary : null,
+                  ),
+                  title: Text(
+                    'System Default',
+                    style: TextStyle(
+                      fontWeight: controller.themeMode == ThemeMode.system ? FontWeight.w600 : FontWeight.normal,
+                    ),
+                  ),
                   trailing: controller.themeMode == ThemeMode.system
-                      ? Icon(Icons.check, color: AppColors.primary)
+                      ? Icon(Icons.check_circle_rounded, color: AppColors.primary)
                       : null,
                   onTap: () {
                     controller.setThemeMode(ThemeMode.system);

@@ -1,14 +1,18 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
+import 'package:gifting/core/widgets/shimmer_loading.dart';
 import 'package:gifting/features/home/views/widgets/banner_widget.dart';
 import 'package:gifting/features/home/views/widgets/bulk_order_widget.dart';
 import 'package:gifting/features/home/views/widgets/category_screen.dart';
 import 'package:gifting/features/home/views/widgets/features_widget.dart';
 import 'package:gifting/features/home/views/widgets/footer_widget.dart';
 import 'package:gifting/features/home/views/widgets/how_it_works_widget.dart';
+import 'package:gifting/features/home/views/widgets/logout_dialog_box.dart';
 import 'package:gifting/features/home/views/widgets/occasion_widget.dart';
 import 'package:gifting/features/home/views/widgets/products_widget.dart';
 
@@ -33,13 +37,26 @@ class DashboardScreen extends GetView<CatalogueController> {
         bool isMobile = constraints.maxWidth < 750;
 
         return Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
             automaticallyImplyLeading: false,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow
+                .withValues(alpha: 0.1),
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow
+                      .withValues(alpha: 0.1),
+                ),
+              ),
+            ),
             title: Row(
               spacing: 8,
               children: [
                 Icon(Icons.eco_outlined, color: AppColors.primary, size: 30),
-
                 Text(
                   'TRIBE GREEN',
                   style: TextStyle(
@@ -51,15 +68,32 @@ class DashboardScreen extends GetView<CatalogueController> {
               ],
             ),
             actionsPadding: const EdgeInsets.only(right: 8),
-            actions: [if (isMobile) const ThemeToggleButton()],
+            actions: [
+              if (isMobile) ...[
+                const ThemeToggleButton(),
+                IconButton(
+                  tooltip: 'Sign out',
+                  onPressed: () {
+                    openLogoutDialogBox();
+                  },
+                  icon: const Icon(
+                    Icons.logout,
+                    size: 20,
+                    fontWeight: FontWeight.w900,
+                  ),
+                ),
+              ],
+            ],
           ),
           body: RefreshIndicator(
             onRefresh: () async {
-              await controller.loadDashBoard();
+              controller.loadDashBoard();
             },
+            displacement:
+                kToolbarHeight + MediaQuery.of(context).padding.top + 30,
             child: Obx(() {
               return controller.isDashboardLoading.value
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const DashboardLoadingSkeleton()
                   : controller.errorDashboard.value
                   ? RetryWidget(
                       onPressed: () {
@@ -67,7 +101,14 @@ class DashboardScreen extends GetView<CatalogueController> {
                       },
                     )
                   : SingleChildScrollView(
+                      padding: EdgeInsets.only(
+                        top: isMobile
+                            ? kToolbarHeight +
+                                  MediaQuery.of(context).padding.top / 1.4
+                            : kToolbarHeight,
+                      ),
                       physics: const BouncingScrollPhysics(),
+                      clipBehavior: Clip.none,
                       child: Column(
                         children: [
                           BannerWidget(isMobile: isMobile),

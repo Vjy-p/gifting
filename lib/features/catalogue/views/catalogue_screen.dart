@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
+import 'package:gifting/core/widgets/shimmer_loading.dart';
 import 'package:gifting/features/catalogue/views/widgets/bottom_sheet_filter_widget.dart';
 import 'package:gifting/features/catalogue/views/widgets/web_filter_widget.dart';
 import 'package:gifting/features/products/views/product_tile.dart';
+import 'package:paginated_list/paginated_list.dart';
 
 import '../../../app/routes/app_routes.dart';
 import '../../products/models/product_model.dart';
@@ -67,20 +70,31 @@ class CatalogueScreen extends GetView<CatalogueController> {
                         ),
                       ),
                       if (isMobile)
-                        IconButton(
-                          style: const ButtonStyle(
-                            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                            visualDensity: VisualDensity.compact,
+                        Obx(
+                          () => IconButton(
+                            style: const ButtonStyle(
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                              visualDensity: VisualDensity.compact,
+                            ),
+                            onPressed: () {
+                              openBottomSheetFilterWidget(context, controller);
+                            },
+                            iconSize: 20,
+                            icon: controller.hasActiveFilters.value
+                                ? Badge(
+                                    smallSize: 8,
+                                    backgroundColor: Theme.of(context)
+                                        .hintColor,
+                                    child: const Icon(
+                                      Icons.filter_alt,
+                                      size: 20,
+                                    ),
+                                  )
+                                : const Icon(Icons.filter_alt, size: 20),
                           ),
-                          onPressed: () {
-                            openBottomSheetFilterWidget(context, controller);
-                          },
-                          iconSize: 20,
-                          icon: const Icon(Icons.filter_alt, size: 20),
                         ),
                     ],
                   ),
-                  if (isMobile) selectedFilters(),
                   Expanded(
                     child: isMobile
                         ? productsWidget()
@@ -110,7 +124,7 @@ class CatalogueScreen extends GetView<CatalogueController> {
   Widget productsWidget() {
     return Obx(() {
       if (controller.isLoading.value) {
-        return const Center(child: CircularProgressIndicator());
+        return const CatalogueLoadingSkeleton();
       }
 
       if (controller.error.value) {
@@ -136,96 +150,92 @@ class CatalogueScreen extends GetView<CatalogueController> {
               ? 2
               : 1;
 
-          return GridView.builder(
-            itemCount: products.length,
-            physics: const BouncingScrollPhysics(),
-            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: columns,
-              crossAxisSpacing: 18,
-              mainAxisSpacing: 18,
-
-              childAspectRatio: columns == 1 ? 1.3 : 0.68,
-            ),
-            itemBuilder: (context, index) {
-              final ProductModel product = products[index];
-              return ProductTile(
-                product: product,
-                onTap: () {
-                  Get.toNamed(AppRoutes.productDetails, arguments: product);
-                },
-              );
-            },
-          );
+          return columns == 1
+              ? PaginatedList(
+                  items: controller.products,
+                  physics: const BouncingScrollPhysics(),
+                  isRecentSearch: false,
+                  loadingIndicator: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  onLoadMore: (v) {
+                    controller.loadProducts(reset: false);
+                  },
+                  isLastPage: controller.isLastPage.value,
+                  builder: (context, index) {
+                    final ProductModel product = products[index];
+                    return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: AspectRatio(
+                            aspectRatio: 1,
+                            child: ProductTile(
+                              product: product,
+                              onTap: () {
+                                Get.toNamed(
+                                  AppRoutes.productDetails,
+                                  arguments: product,
+                                );
+                              },
+                            ),
+                          ),
+                        )
+                        .animate()
+                        .fadeIn(
+                          delay: ((index % 6) * 45).ms,
+                          duration: 400.ms,
+                          curve: Curves.easeOutCubic,
+                        )
+                        .slideY(
+                          begin: 0.08,
+                          end: 0,
+                          duration: 400.ms,
+                          curve: Curves.easeOutCubic,
+                        );
+                  },
+                )
+              : PaginatedGrid(
+                  items: controller.products,
+                  physics: const BouncingScrollPhysics(),
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: columns,
+                    crossAxisSpacing: 18,
+                    mainAxisSpacing: 18,
+                    childAspectRatio: columns == 1 ? 1.3 : 0.68,
+                  ),
+                  loadingIndicator: const Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                  onLoadMore: () async {
+                    await controller.loadProducts(reset: false);
+                  },
+                  isLastPage: controller.isLastPage.value,
+                  builder: (context, index) {
+                    final ProductModel product = products[index];
+                    return ProductTile(
+                          product: product,
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.productDetails,
+                              arguments: product,
+                            );
+                          },
+                        )
+                        .animate()
+                        .fadeIn(
+                          delay: ((index % 8) * 40).ms,
+                          duration: 400.ms,
+                          curve: Curves.easeOutCubic,
+                        )
+                        .slideY(
+                          begin: 0.08,
+                          end: 0,
+                          duration: 400.ms,
+                          curve: Curves.easeOutCubic,
+                        );
+                  },
+                );
         },
       );
     });
-  }
-
-  Widget selectedFilters() {
-    return Obx(
-      () => Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        runAlignment: WrapAlignment.start,
-        alignment: WrapAlignment.start,
-        crossAxisAlignment: WrapCrossAlignment.start,
-        children: [
-          if (controller.selectedCategory.isNotEmpty) ...[
-            ChoiceChip(
-              label: Text(controller.selectedCategory.value),
-              selected: true,
-              onSelected: (_) =>
-                  controller.selectCategory(controller.selectedCategory.value),
-              selectedColor: AppColors.sage,
-              labelStyle: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-              side: BorderSide(color: AppColors.primary),
-            ),
-          ],
-          ...controller.selectedCustomisations.map(
-            (e) => ChoiceChip(
-              label: Text(e),
-              selected: true,
-              onSelected: (_) => controller.toggleCustomisation(e),
-              selectedColor: AppColors.sage,
-              labelStyle: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-              side: BorderSide(color: AppColors.primary),
-            ),
-          ),
-          ...controller.selectedOccasions.map(
-            (e) => ChoiceChip(
-              label: Text(e),
-              selected: true,
-              onSelected: (_) => controller.toggleOccasion(e),
-              selectedColor: AppColors.sage,
-              labelStyle: TextStyle(
-                color: AppColors.primary,
-                fontWeight: FontWeight.w600,
-              ),
-              side: BorderSide(color: AppColors.primary),
-            ),
-          ),
-          // if (controller.selectedPrice.value.start != null) ...[
-          //   ChoiceChip(
-          //     label: Text(controller.selectedCategory.value),
-          //     selected: true,
-          //     onSelected: (_) =>
-          //         controller.selectCategory(controller.selectedCategory.value),
-          //     selectedColor: AppColors.sage,
-          //     labelStyle: TextStyle(
-          //       color: AppColors.primary,
-          //       fontWeight: FontWeight.w600,
-          //     ),
-          //     side: BorderSide(color: AppColors.primary),
-          //   ),
-          // ],
-        ],
-      ),
-    );
   }
 }

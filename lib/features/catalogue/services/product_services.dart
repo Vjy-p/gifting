@@ -54,7 +54,7 @@ class ProductServices {
       }
 
       final response = await query.order('sort_order').range(from, to);
-
+      log('products: page $from ,limit $limit, length : ${response.length}');
       return response.map((json) => ProductModel.fromJson(json)).toList();
     } on PostgrestException catch (error, stackTrace) {
       log('Supabase product query error: ${error.message}, $stackTrace');

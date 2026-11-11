@@ -1,8 +1,12 @@
+import 'dart:ui';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
+import 'package:gifting/core/widgets/shimmer_loading.dart';
 import 'package:gifting/features/enquiries/controllers/enquiry_controller.dart';
 import 'package:gifting/features/enquiries/views/enquiry_tile.dart';
 
@@ -16,7 +20,22 @@ class EnquiryScreen extends GetView<EnquiryController> {
         bool isMobile = constraints.maxWidth < 750;
 
         return Scaffold(
+          extendBodyBehindAppBar: true,
           appBar: AppBar(
+            automaticallyImplyLeading: false,
+            elevation: 0,
+            surfaceTintColor: Colors.transparent,
+            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow
+                .withValues(alpha: 0.1),
+            flexibleSpace: ClipRect(
+              child: BackdropFilter(
+                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                child: Container(
+                  color: Theme.of(context).colorScheme.surfaceContainerLow
+                      .withValues(alpha: 0.1),
+                ),
+              ),
+            ),
             title: const Text('My Enquiries'),
             actionsPadding: const EdgeInsets.only(right: 8),
             actions: [if (isMobile) const ThemeToggleButton()],
@@ -26,33 +45,34 @@ class EnquiryScreen extends GetView<EnquiryController> {
               final isMobile = constraints.maxWidth < 750;
               final isTab =
                   constraints.maxWidth >= 750 && constraints.maxWidth < 1200;
-
               return Padding(
-                padding: EdgeInsets.all(isMobile ? 16 : 28),
+                padding: EdgeInsets.fromLTRB(
+                  isMobile ? 16 : 28,
+                  isMobile
+                      ? kToolbarHeight +
+                            MediaQuery.of(context).padding.top / 1.4
+                      : kToolbarHeight + 10,
+                  isMobile ? 16 : 28,
+                  isMobile ? 16 : 28,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Track your enquiries',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.titleMedium!
+                          .copyWith(fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 4),
                     Text(
                       'View and manage your corporate gifting requests.',
-                      style: TextStyle(color: AppColors.secondaryText),
+                      style: Theme.of(context).textTheme.bodySmall!.copyWith(),
                     ),
-
                     const SizedBox(height: 20),
-
                     Expanded(
                       child: Obx(() {
                         if (controller.isLoading.value) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return const EnquiriesLoadingSkeleton();
                         }
 
                         if (controller.error.value) {
@@ -98,6 +118,7 @@ class EnquiryScreen extends GetView<EnquiryController> {
                         return GridView.builder(
                           itemCount: items.length,
                           physics: const BouncingScrollPhysics(),
+                          padding: EdgeInsets.zero,
                           gridDelegate:
                               SliverGridDelegateWithFixedCrossAxisCount(
                                 crossAxisCount: isMobile
@@ -110,7 +131,19 @@ class EnquiryScreen extends GetView<EnquiryController> {
                                 mainAxisExtent: 220,
                               ),
                           itemBuilder: (context, index) {
-                            return EnquiryTile(enquiry: items[index]);
+                            return EnquiryTile(enquiry: items[index])
+                                .animate()
+                                .fadeIn(
+                                  delay: ((index % 6) * 60).ms,
+                                  duration: 400.ms,
+                                  curve: Curves.easeOutCubic,
+                                )
+                                .slideY(
+                                  begin: 0.08,
+                                  end: 0,
+                                  duration: 400.ms,
+                                  curve: Curves.easeOutCubic,
+                                );
                           },
                         );
                       }),

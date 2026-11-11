@@ -88,9 +88,6 @@ class EnquiryTile extends StatelessWidget {
                 ),
                 onPressed: () {
                   Get.dialog(
-                    barrierColor: AppColors.isDark
-                        ? Colors.black.withValues(alpha: 0.7)
-                        : AppColors.darkGreen.withValues(alpha: 0.4),
                     Dialog(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(16),
@@ -99,7 +96,6 @@ class EnquiryTile extends StatelessWidget {
                         horizontal: 16,
                         vertical: 16,
                       ),
-                      backgroundColor: AppColors.surface,
                       constraints: const BoxConstraints(maxWidth: 600),
                       child: EnquiryDetailsScreen(enquiry: enquiry),
                     ),

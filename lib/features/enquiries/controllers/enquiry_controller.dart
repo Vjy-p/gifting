@@ -3,9 +3,6 @@ import 'dart:developer';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:gifting/app/routes/app_routes.dart';
-import 'package:gifting/core/services/common_services.dart';
-import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/widgets/custom_toast.dart';
 import 'package:gifting/features/catalogue/controllers/catalogue_controller.dart';
 import 'package:gifting/features/enquiries/models/enquiry_model.dart';
@@ -228,7 +225,7 @@ class EnquiryController extends GetxController {
     selectedProducts.removeWhere((item) => item.id == product.id);
   }
 
-  Future<void> submitForm({
+  Future<EnquiryModel?> submitForm({
     required String name,
     required String company,
     required String number,
@@ -237,23 +234,23 @@ class EnquiryController extends GetxController {
     required String quantity,
     required String? message,
   }) async {
-    if (isSubmitting.value) return;
+    if (isSubmitting.value) return null;
 
     if (selectedProducts.isEmpty) {
       customToast(
         title: 'Missing information',
         text: 'Please select atleast one product.',
       );
-      return;
+      return null;
     } else if (selectedOccasion.value == null) {
       customToast(
         title: 'Missing information',
         text: 'Please select occasion.',
       );
-      return;
+      return null;
     } else if (selectedBudget.value == null) {
       customToast(title: 'Missing information', text: 'Please select budget.');
-      return;
+      return null;
     }
 
     final quantity0 = int.tryParse(quantity.trim());
@@ -263,7 +260,7 @@ class EnquiryController extends GetxController {
         title: 'Invalid quantity',
         text: 'Enter a valid number of units.',
       );
-      return;
+      return null;
     }
 
     EnquiryModel enquiry = EnquiryModel(
@@ -299,16 +296,17 @@ class EnquiryController extends GetxController {
       //   arguments: {'reference': reference, 'products': enquiry.products},
       // );
 
-      openThankyouAlertBox(enquiry: enquiry, referenceCode: reference);
       await localEnquiryServices.saveEnquiry(enquiry);
       clearData();
       loadEnquiries();
+      return enquiry;
     } catch (error) {
       log('Error submit form $error');
       customToast(
         title: 'Submission failed',
         text: 'Your enquiry could not be saved. Please try again.',
       );
+      return null;
     } finally {
       isSubmitting.value = false;
     }
@@ -327,6 +325,7 @@ class EnquiryController extends GetxController {
       error.value = false;
 
       enquiries = localEnquiryServices.getAllEnquiries();
+
       isLoading.value = false;
       error.value = false;
     } catch (e) {
@@ -336,143 +335,5 @@ class EnquiryController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  Future<dynamic> openThankyouAlertBox({
-    required EnquiryModel enquiry,
-    String? referenceCode,
-  }) {
-    return Get.dialog(
-      barrierDismissible: false,
-      barrierColor: AppColors.sage.withValues(alpha: 0.4),
-      Dialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 560),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                // Container(
-                //   height: 88,
-                //   width: 88,
-                //   decoration: const BoxDecoration(
-                //     color: AppColors.sage,
-                //     shape: BoxShape.circle,
-                //   ),
-                //   child: const Icon(
-                //     Icons.check_circle_outline,
-                //     size: 52,
-                //     color: AppColors.primary,
-                //   ),
-                // ),
-                Card(
-                  color: AppColors.sage,
-                  clipBehavior: Clip.antiAlias,
-                  child: ClipRRect(
-                    borderRadius: BorderRadiusGeometry.circular(16),
-                    child: Image.asset(
-                      'assets/gif/success.gif',
-                      width: 140,
-                      height: 140,
-                      fit: BoxFit.contain,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 28),
-                const Text(
-                  'Thank you!',
-                  style: TextStyle(fontSize: 34, letterSpacing: 0.25),
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 12),
-                const Text(
-                  'Your enquiry has been submitted successfully. '
-                  'Our team will contact you within 24 hours.',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, letterSpacing: 0.5),
-                ),
-                const SizedBox(height: 28),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: AppColors.surface,
-                    border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Enquiry reference',
-                        style: TextStyle(color: AppColors.secondaryText),
-                      ),
-                      const SizedBox(height: 6),
-                      SelectableText(
-                        referenceCode ?? enquiry.referenceCode ?? '',
-                        style: TextStyle(
-                          fontWeight: FontWeight.w700,
-                          color: AppColors.darkGreen,
-                          fontSize: 18,
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                      const Text(
-                        'Selected products',
-                        style: TextStyle(fontWeight: FontWeight.w600),
-                      ),
-                      const SizedBox(height: 8),
-                      ...enquiry.products.map(
-                        (product) => Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Icon(
-                                Icons.check_circle_outline,
-                                size: 18,
-                                color: AppColors.primary,
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(child: Text(product.name)),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 28),
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () => Get.offAllNamed(AppRoutes.home),
-                    child: const Text('Back to Home'),
-                  ),
-                ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    onPressed: () {
-                      CommonServices().openWhatsApp(
-                        referenceCode:
-                            referenceCode ?? enquiry.referenceCode ?? '',
-                        products: enquiry.products,
-                        qunatity: enquiry.quantity.toString(),
-                      );
-                    },
-                    child: const Text('Connect on Whatsapp'),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

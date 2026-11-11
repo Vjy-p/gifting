@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/features/enquiries/views/enquiry_screen.dart';
 import 'package:gifting/features/home/views/dashboard_screen.dart';
+import 'package:gifting/features/home/views/widgets/logout_dialog_box.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -30,12 +31,27 @@ class _HomeScreenState extends State<HomeScreen> {
                         selectedIndex = value;
                         setState(() {});
                       },
-                      leading: const Column(
-                        children: [
-                          SizedBox(height: 16),
-                          ThemeToggleButton(),
-                          SizedBox(height: 12),
-                        ],
+                      leading: const SizedBox(height: 16),
+                      trailingAtBottom: true,
+                      trailing: Padding(
+                        padding: const EdgeInsets.only(bottom: 30),
+                        child: Column(
+                          spacing: 2,
+                          children: [
+                            const ThemeToggleButton(),
+                            IconButton(
+                              tooltip: 'Sign out',
+                              onPressed: () {
+                                openLogoutDialogBox();
+                              },
+                              icon: const Icon(
+                                Icons.logout,
+                                size: 20,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       destinations: const [
                         NavigationRailDestination(
