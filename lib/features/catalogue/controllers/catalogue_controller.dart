@@ -13,10 +13,6 @@ class CatalogueController extends GetxController {
 
   final ProductServices _repository;
 
-  final searchController = TextEditingController();
-
-  static const int pageSize = 10;
-
   final categories = [
     'All Gifts',
     'Drinkware',
@@ -63,6 +59,10 @@ class CatalogueController extends GetxController {
   final errorDashboard = false.obs;
   final isLoading = false.obs;
   final error = false.obs;
+  final isLastPage = false.obs;
+  final page = 0.obs;
+  static const int pageSize = 10;
+  RxBool hasActiveFilters = false.obs;
 
   Timer? _searchDebounce;
 
@@ -94,12 +94,6 @@ class CatalogueController extends GetxController {
     }
   }
 
-  bool get hasActiveFilters =>
-      selectedCategory.value != 'All Gifts' ||
-      selectedOccasions.isNotEmpty ||
-      selectedCustomisations.isNotEmpty ||
-      selectedBudgetIndex.value != 0;
-
   @override
   void onInit() {
     super.onInit();
@@ -111,6 +105,9 @@ class CatalogueController extends GetxController {
     try {
       isDashboardLoading.value = true;
       errorDashboard.value = false;
+      products.clear();
+      isLastPage.value = false;
+      page.value = 0;
       await Future.wait([
         loadBannerProducts(),
         loadMostRequestedProducts(),
@@ -127,27 +124,39 @@ class CatalogueController extends GetxController {
     }
   }
 
-  Future<void> loadProducts({bool reset = true}) async {
-    if (isLoading.value) return;
+  Future<void> loadProducts({bool reset = true, String search = ''}) async {
+    if (isLoading.value || isLastPage.value) return;
 
-    products.clear();
-    error.value = false;
-    isLoading.value = true;
+    if (products.isEmpty || products.length < pageSize || reset) {
+      products.clear();
+      error.value = false;
+      isLoading.value = true;
+      page.value = 0;
+    }
 
     try {
       final result = await _repository.fetchProducts(
-        search: searchController.text.trim(),
+        page: page.value,
+        limit: pageSize,
+        search: search.trim(),
         category: selectedCategory.value,
         minPrice: minPrice,
         maxPrice: maxPrice,
         occasions: selectedOccasions.toList(),
         customisations: selectedCustomisations.toList(),
       );
+      page.value++;
 
-      products.assignAll(result);
+      if (result.length < pageSize) {
+        isLastPage.value = true;
+      }
 
+      products.addAll(result);
+
+      isLoading.value = false;
       error.value = false;
     } catch (e) {
+      isLoading.value = false;
       error.value = true;
       debugPrint('Catalogue error: $e');
     } finally {
@@ -201,11 +210,23 @@ class CatalogueController extends GetxController {
 
   void selectCategory(String category) {
     selectedCategory.value = category;
+    isLastPage.value = false;
+    products.clear();
+    hasActiveFilters.value =
+        selectedCategory.value != 'All Gifts' ||
+        selectedOccasions.isNotEmpty ||
+        selectedCustomisations.isNotEmpty ||
+        selectedBudgetIndex.value != 0;
     loadProducts();
   }
 
   void selectBudget(int index) {
     selectedBudgetIndex.value = index;
+    hasActiveFilters.value =
+        selectedCategory.value != 'All Gifts' ||
+        selectedOccasions.isNotEmpty ||
+        selectedCustomisations.isNotEmpty ||
+        selectedBudgetIndex.value != 0;
     loadProducts();
   }
 
@@ -215,6 +236,11 @@ class CatalogueController extends GetxController {
     } else {
       selectedOccasions.add(occasion);
     }
+    hasActiveFilters.value =
+        selectedCategory.value != 'All Gifts' ||
+        selectedOccasions.isNotEmpty ||
+        selectedCustomisations.isNotEmpty ||
+        selectedBudgetIndex.value != 0;
     loadProducts();
   }
 
@@ -224,7 +250,11 @@ class CatalogueController extends GetxController {
     } else {
       selectedCustomisations.add(value);
     }
-
+    hasActiveFilters.value =
+        selectedCategory.value != 'All Gifts' ||
+        selectedOccasions.isNotEmpty ||
+        selectedCustomisations.isNotEmpty ||
+        selectedBudgetIndex.value != 0;
     loadProducts();
   }
 
@@ -241,19 +271,15 @@ class CatalogueController extends GetxController {
     selectedOccasions.clear();
     selectedCustomisations.clear();
     selectedBudgetIndex.value = 0;
-    searchController.clear();
     _searchDebounce?.cancel();
+    isLastPage.value = false;
+    products.clear();
     loadProducts();
-  }
-
-  Future<void> loadMore() async {
-    await loadProducts(reset: false);
   }
 
   @override
   void onClose() {
     _searchDebounce?.cancel();
-    searchController.dispose();
     super.onClose();
   }
 }

@@ -10,16 +10,6 @@ class EnquiryServices {
 
   final SupabaseClient _client;
 
-  // Future<String> submit(EnquiryModel enquiry) async {
-  //   final result = await _client
-  //       .from('enquiries')
-  //       .insert(enquiry.toJson())
-  //       .select('reference_code')
-  //       .single();
-
-  //   return result['reference_code'] as String;
-  // }
-
   Future<String> submit(EnquiryModel enquiry) async {
     try {
       final reference =

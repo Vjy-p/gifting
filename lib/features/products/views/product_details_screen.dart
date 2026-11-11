@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ui';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/services/common_services.dart';
@@ -16,7 +18,21 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        elevation: 0,
+        surfaceTintColor: Colors.transparent,
+        backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow
+            .withValues(alpha: 0.1),
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+            child: Container(
+              color: Theme.of(context).colorScheme.surfaceContainerLow
+                  .withValues(alpha: 0.1),
+            ),
+          ),
+        ),
         title: const Text('Product Details'),
         actions: const [ThemeToggleButton(), SizedBox(width: 8)],
       ),
@@ -25,7 +41,15 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
           final isMobile = constraints.maxWidth < 750;
 
           return SingleChildScrollView(
-            padding: EdgeInsets.all(isMobile ? 20 : 48),
+            physics: const BouncingScrollPhysics(),
+            padding: EdgeInsets.fromLTRB(
+              isMobile ? 16 : 28,
+              isMobile
+                  ? kToolbarHeight + MediaQuery.of(context).padding.top / 1.6
+                  : kToolbarHeight + 10,
+              isMobile ? 16 : 28,
+              isMobile ? 16 : 28,
+            ),
             child: Center(
               child: ConstrainedBox(
                 constraints: const BoxConstraints(maxWidth: 1150),
@@ -44,9 +68,29 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        productImage(context),
+        productImage(context)
+            .animate()
+            .fadeIn(duration: 500.ms, curve: Curves.easeOutCubic)
+            .scale(
+              begin: const Offset(0.96, 0.96),
+              end: const Offset(1, 1),
+              duration: 500.ms,
+              curve: Curves.easeOutCubic,
+            ),
         const SizedBox(height: 24),
-        _productInformation(context),
+        _productInformation(context)
+            .animate()
+            .fadeIn(
+              delay: 150.ms,
+              duration: 500.ms,
+              curve: Curves.easeOutCubic,
+            )
+            .slideY(
+              begin: 0.08,
+              end: 0,
+              duration: 500.ms,
+              curve: Curves.easeOutCubic,
+            ),
       ],
     );
   }
@@ -55,9 +99,33 @@ class ProductDetailsScreen extends GetView<ProductDetailsController> {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Expanded(child: productImage(context)),
+        Expanded(
+          child: productImage(context)
+              .animate()
+              .fadeIn(duration: 500.ms, curve: Curves.easeOutCubic)
+              .scale(
+                begin: const Offset(0.96, 0.96),
+                end: const Offset(1, 1),
+                duration: 500.ms,
+                curve: Curves.easeOutCubic,
+              ),
+        ),
         const SizedBox(width: 48),
-        Expanded(child: _productInformation(context)),
+        Expanded(
+          child: _productInformation(context)
+              .animate()
+              .fadeIn(
+                delay: 150.ms,
+                duration: 500.ms,
+                curve: Curves.easeOutCubic,
+              )
+              .slideY(
+                begin: 0.08,
+                end: 0,
+                duration: 500.ms,
+                curve: Curves.easeOutCubic,
+              ),
+        ),
       ],
     );
   }

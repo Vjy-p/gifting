@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/features/home/views/widgets/section_widget.dart';
 
@@ -24,6 +25,7 @@ class HowItWorksWidget extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: steps.length,
+            padding: EdgeInsets.zero,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               crossAxisSpacing: 20,
@@ -38,10 +40,10 @@ class HowItWorksWidget extends StatelessWidget {
               final step = steps[index];
 
               return Container(
-                padding: const EdgeInsets.all(16),
+                padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
                   color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(14),
                   border: Border.all(color: AppColors.border),
                 ),
                 child: Column(
@@ -52,8 +54,9 @@ class HowItWorksWidget extends StatelessWidget {
                       step.$1,
                       style: TextStyle(
                         color: AppColors.gold,
-                        fontSize: isMobile ? 16 : 24,
+                        fontSize: isMobile ? 18 : 26,
                         fontWeight: FontWeight.w700,
+                        letterSpacing: -0.5,
                       ),
                     ),
                     Text(
@@ -69,14 +72,27 @@ class HowItWorksWidget extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        color: AppColors.darkGreen,
+                        color: AppColors.secondaryText,
                         fontSize: isMobile ? 12 : 14,
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w400,
+                        height: 1.4,
                       ),
                     ),
                   ],
                 ),
-              );
+              )
+                  .animate()
+                  .fadeIn(
+                    delay: (index * 100).ms,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .slideY(
+                    begin: 0.12,
+                    end: 0,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  );
             },
           );
           // return Wrap(

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/features/home/views/widgets/section_widget.dart';
@@ -27,19 +28,33 @@ class ProductsWidget extends StatelessWidget {
           physics: const BouncingScrollPhysics(),
           itemCount: products.length,
           scrollDirection: Axis.horizontal,
+          clipBehavior: Clip.none,
           itemBuilder: (context, index) {
+            final staggerIndex = index.clamp(0, 6);
             return SizedBox(
-              width: 170,
-              child: ProductTile(
-                product: products[index],
-                onTap: () {
-                  Get.toNamed(
-                    AppRoutes.productDetails,
-                    arguments: products[index],
-                  );
-                },
-              ),
-            );
+                  width: 170,
+                  child: ProductTile(
+                    product: products[index],
+                    onTap: () {
+                      Get.toNamed(
+                        AppRoutes.productDetails,
+                        arguments: products[index],
+                      );
+                    },
+                  ),
+                )
+                .animate()
+                .fadeIn(
+                  delay: (staggerIndex * 50).ms,
+                  duration: 400.ms,
+                  curve: Curves.easeOutCubic,
+                )
+                .slideX(
+                  begin: 0.08,
+                  end: 0,
+                  duration: 400.ms,
+                  curve: Curves.easeOutCubic,
+                );
           },
           separatorBuilder: (context, index) {
             return const SizedBox(width: 10);

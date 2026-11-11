@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
+import 'package:gifting/core/theme/app_colors.dart';
 
 class BulkOrderWidget extends StatelessWidget {
   const BulkOrderWidget({super.key, required this.isMobile});
@@ -13,9 +15,14 @@ class BulkOrderWidget extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 24),
       padding: EdgeInsets.symmetric(
         horizontal: isMobile ? 16 : 24,
-        vertical: isMobile ? 20 : 56,
+        vertical: isMobile ? 24 : 56,
       ),
-      color: Theme.of(context).colorScheme.surface,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
+        border: Border.symmetric(
+          horizontal: BorderSide(color: AppColors.border),
+        ),
+      ),
       child: Column(
         children: [
           Text(
@@ -42,6 +49,14 @@ class BulkOrderWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
+    )
+        .animate()
+        .fadeIn(duration: 500.ms, curve: Curves.easeOutCubic)
+        .slideY(
+          begin: 0.1,
+          end: 0,
+          duration: 500.ms,
+          curve: Curves.easeOutCubic,
+        );
   }
 }

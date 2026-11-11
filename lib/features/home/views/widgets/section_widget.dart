@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 
 class SectionWidget extends StatelessWidget {
   const SectionWidget({
@@ -29,7 +30,7 @@ class SectionWidget extends StatelessWidget {
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1240),
               child: Column(
-                spacing: isMobile ? 6 : 12,
+                spacing: isMobile ? 6 : 8,
                 crossAxisAlignment: isMobile
                     ? CrossAxisAlignment.start
                     : CrossAxisAlignment.center,
@@ -40,15 +41,35 @@ class SectionWidget extends StatelessWidget {
                     style: isMobile
                         ? Theme.of(context).textTheme.titleLarge
                         : Theme.of(context).textTheme.headlineMedium,
-                  ),
+                  )
+                      .animate()
+                      .fadeIn(duration: 450.ms, curve: Curves.easeOutCubic)
+                      .slideY(
+                        begin: 0.12,
+                        end: 0,
+                        duration: 450.ms,
+                        curve: Curves.easeOutCubic,
+                      ),
                   Text(
                     subtitle,
                     style: isMobile
                         ? Theme.of(context).textTheme.bodyMedium
                         : Theme.of(context).textTheme.bodySmall,
                     textAlign: isMobile ? TextAlign.start : TextAlign.center,
-                  ),
-                  SizedBox(height: isMobile ? 10 : 28),
+                  )
+                      .animate()
+                      .fadeIn(
+                        delay: 80.ms,
+                        duration: 450.ms,
+                        curve: Curves.easeOutCubic,
+                      )
+                      .slideY(
+                        begin: 0.12,
+                        end: 0,
+                        duration: 450.ms,
+                        curve: Curves.easeOutCubic,
+                      ),
+                  const SizedBox(height: 10),
                   child,
                 ],
               ),

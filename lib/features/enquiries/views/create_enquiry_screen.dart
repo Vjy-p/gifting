@@ -3,12 +3,17 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:gifting/app/routes/app_routes.dart';
+import 'package:gifting/core/services/common_services.dart';
 import 'package:gifting/core/theme/app_colors.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
+import 'package:gifting/core/widgets/custom_text_field.dart';
 import 'package:gifting/core/widgets/custom_toast.dart';
+import 'package:gifting/features/authentication/models/user_model.dart';
+import 'package:gifting/features/authentication/services/local_auth_services.dart';
 import 'package:gifting/features/enquiries/controllers/enquiry_controller.dart';
+import 'package:gifting/features/enquiries/models/enquiry_model.dart';
 import 'package:gifting/features/products/models/product_model.dart';
 import 'package:intl/intl.dart';
 
@@ -39,7 +44,11 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
   final deliveryDateController = TextEditingController();
   final deliveryDateFocus = FocusNode();
 
+  final occasionFocus = FocusNode();
+  final budgetFocus = FocusNode();
+
   DateTime? deliveryDate;
+  UserModel? user = LocalAuthServices.getUserDetails();
 
   @override
   void initState() {
@@ -58,6 +67,16 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
 
     if (args?['customisations'] != null) {
       controller.addCustomisation(args?['customisations'] ?? []);
+    }
+
+    if (args?['quantity'] != null) {
+      quantityController.text = args?['quantity']?.toString() ?? '';
+    }
+    if (user != null) {
+      nameController.text = user?.name ?? '';
+      emailController.text = user?.email ?? '';
+      phoneController.text = user?.mobile ?? '';
+      companyController.text = user?.company ?? '';
     }
   }
 
@@ -108,133 +127,152 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (isMobile) productsWidget(isMobile),
-                      Text(
-                        'Tell us about your gifting needs',
-                        style: Theme.of(context).textTheme.headlineMedium,
+                      Padding(
+                        padding: const EdgeInsets.only(top: 20, bottom: 8),
+                        child: Text(
+                          'Tell us about your gifting needs',
+                          style: isMobile
+                              ? Theme.of(context).textTheme.headlineSmall
+                              : Theme.of(context).textTheme.headlineMedium,
+                        ),
                       ),
-                      const SizedBox(height: 8),
-                      const Text(
+                      Text(
                         'Share your requirements and our team can prepare '
                         'a suitable corporate gifting proposal.',
+                        style: isMobile
+                            ? Theme.of(context).textTheme.bodySmall
+                            : Theme.of(context).textTheme.bodyLarge,
                       ),
                       const SizedBox(height: 28),
                       _sectionTitle('Your details'),
                       _responsiveFields(context, [
-                        _textField(
-                          nameController,
-                          'Full name',
-                          validator: controller.validateRequired,
-                          focusNode: nameFocus,
-                          nextNode: companyFocus,
+                        CustomTextField(
+                          label: 'Full name',
+                          icon: const Icon(Icons.person),
+                          controller: nameController,
+                          currentFocus: nameFocus,
+                          nextFocus: companyFocus,
                         ),
-                        _textField(
-                          companyController,
-                          'Company name',
-                          validator: controller.validateRequired,
-                          focusNode: companyFocus,
-                          nextNode: phoneFocus,
+                        CustomTextField(
+                          label: 'Company name',
+                          icon: const Icon(Icons.factory),
+                          controller: companyController,
+                          currentFocus: companyFocus,
+                          nextFocus: phoneFocus,
                         ),
-                        _textField(
-                          phoneController,
-                          'Phone number',
-                          hint: '+91 9876543210',
-                          keyboardType: TextInputType.phone,
-                          validator: controller.validatePhone,
-                          focusNode: phoneFocus,
-                          nextNode: emailFocus,
-                          isMobile: true,
+                        CustomTextField(
+                          label: 'Phone number',
+                          icon: const Icon(Icons.call),
+                          controller: phoneController,
+                          currentFocus: phoneFocus,
+                          nextFocus: emailFocus,
+                          isMobileNumber: true,
                         ),
-                        _textField(
-                          emailController,
-                          'Email address',
-                          keyboardType: TextInputType.emailAddress,
-                          validator: controller.validateEmail,
-                          focusNode: emailFocus,
-                          // nextNode: companyFocus,
+                        CustomTextField(
+                          label: 'Email',
+                          icon: const Icon(Icons.email),
+                          controller: emailController,
+                          currentFocus: emailFocus,
+                          nextFocus: quantityFocus,
+                          isEmail: true,
                         ),
                       ]),
                       const SizedBox(height: 28),
                       _sectionTitle('Order requirements'),
                       _responsiveFields(context, [
+                        CustomTextField(
+                          label: 'Number of units',
+                          icon: const Icon(Icons.calculate),
+                          controller: quantityController,
+                          currentFocus: quantityFocus,
+                          nextFocus: occasionFocus,
+                          isNumber: true,
+                        ),
                         Obx(
-                          () => DropdownButtonFormField<String>(
+                          () => CustomDropDownField(
+                            label: 'Occasion *',
+                            icon: const Icon(Icons.festival),
                             initialValue: controller.selectedOccasion.value,
-                            decoration: const InputDecoration(
-                              labelText: 'Occasion *',
-                            ),
-                            items: controller.occasions
-                                .map(
-                                  (item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(item),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              controller.setOccasion(value);
+                            items: controller.occasions,
+                            currentFocus: occasionFocus,
+                            nextFocus: budgetFocus,
+                            onSaved: (value) {
+                              controller.setOccasion(value?.toString());
                             },
-                            validator: (value) =>
-                                value == null ? 'Select an occasion' : null,
                           ),
-                        ),
-                        _textField(
-                          quantityController,
-                          'Number of units',
-                          keyboardType: TextInputType.number,
-                          validator: controller.validateQuantity,
-                          focusNode: quantityFocus,
                         ),
                         Obx(
-                          () => DropdownButtonFormField<String>(
+                          () => CustomDropDownField(
+                            label: 'Budget per unit *',
+                            icon: const Icon(Icons.monetization_on),
                             initialValue: controller.selectedBudget.value,
-                            decoration: const InputDecoration(
-                              labelText: 'Budget per unit *',
-                            ),
-                            items: controller.budgetBands
-                                .map(
-                                  (item) => DropdownMenuItem(
-                                    value: item,
-                                    child: Text(item),
-                                  ),
-                                )
-                                .toList(),
-                            onChanged: (value) {
-                              controller.setBudget(value);
+                            items: controller.budgetBands,
+                            currentFocus: budgetFocus,
+                            nextFocus: deliveryDateFocus,
+                            onSaved: (value) {
+                              controller.setBudget(value.toString());
                             },
-                            validator: (value) =>
-                                value == null ? 'Select a budget' : null,
                           ),
                         ),
-                        TextFormField(
-                          // initialValue: deliveryDate.value != null
-                          //     ? DateFormat('dd MMM yyyy')
-                          //           .format(deliveryDate.value!)
-                          //     : 'Choose delivery date',
-                          controller: deliveryDateController,
-                          focusNode: deliveryDateFocus,
-                          readOnly: true,
-                          decoration: const InputDecoration(
-                            label: Text('Choose delivery date'),
-                            suffixIcon: Icon(
-                              Icons.calendar_today_rounded,
-                              size: 16,
+                        Column(
+                          spacing: 8,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text(
+                              'Delivery date',
+                              style: TextStyle(
+                                fontSize: 15,
+                                // color: textColor ?? CustomColors.textColor,
+                              ),
                             ),
-                          ),
+                            TextFormField(
+                              // initialValue: deliveryDate.value != null
+                              //     ? DateFormat('dd MMM yyyy')
+                              //           .format(deliveryDate.value!)
+                              //     : 'Choose delivery date',
+                              controller: deliveryDateController,
+                              focusNode: deliveryDateFocus,
+                              readOnly: true,
 
-                          onTap: () async {
-                            DateTime? resp = await pickDeliveryDate(context);
-                            if (resp != null) {
-                              deliveryDateController.text = DateFormat(
-                                'dd MMM yyyy',
-                              ).format(resp);
-                              setState(() {});
-                            }
-                          },
-                          onChanged: (value) {
-                            // pickDeliveryDate(context);
-                          },
-                          validator: (value) =>
-                              value == null ? 'Select a delivery date' : null,
+                              decoration: const InputDecoration(
+                                isDense: true,
+                                hint: Text('Choose delivery date'),
+                                prefixIcon: Icon(Icons.calendar_month),
+                              ),
+
+                              onTap: () async {
+                                DateTime? resp = await pickDeliveryDate(
+                                  context,
+                                );
+                                if (resp != null) {
+                                  deliveryDateController.text = DateFormat(
+                                    'dd MMM yyyy',
+                                  ).format(resp);
+                                  setState(() {});
+                                }
+                                if (context.mounted) {
+                                  fieldFocusChange(
+                                    context: context,
+                                    currentFocus: deliveryDateFocus,
+                                    nextFocus: messageFocus,
+                                  );
+                                }
+                              },
+                              onTapOutside: (event) {
+                                fieldFocusChange(
+                                  context: context,
+                                  currentFocus: deliveryDateFocus,
+                                  nextFocus: messageFocus,
+                                );
+                              },
+                              onChanged: (value) {
+                                // pickDeliveryDate(context);
+                              },
+                              validator: (value) => value == null
+                                  ? 'Select a delivery date'
+                                  : null,
+                            ),
+                          ],
                         ),
                       ]),
                       const SizedBox(height: 28),
@@ -246,6 +284,9 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
                           ) {
                             return CheckboxListTile(
                               value: controller.customisations.contains(option),
+                              visualDensity: VisualDensity.comfortable,
+                              materialTapTargetSize:
+                                  MaterialTapTargetSize.shrinkWrap,
                               title: Text(option),
                               contentPadding: EdgeInsets.zero,
                               controlAffinity: ListTileControlAffinity.leading,
@@ -258,11 +299,13 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      _textField(
-                        messageController,
-                        'Additional message (optional)',
+                      CustomTextField(
+                        label: 'Additional message (optional)',
+                        controller: messageController,
+                        // icon: const Icon(Icons.message),
                         maxLines: 4,
-                        focusNode: messageFocus,
+                        currentFocus: messageFocus,
+                        validate: false,
                       ),
                       const SizedBox(height: 12),
                       Text(
@@ -279,19 +322,23 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
                           child: ElevatedButton(
                             onPressed: controller.isSubmitting.value
                                 ? null
-                                : () {
+                                : () async {
                                     if (formKey.currentState?.validate() ==
                                             true &&
                                         deliveryDate != null) {
-                                      controller.submitForm(
-                                        name: nameController.text,
-                                        company: companyController.text,
-                                        number: phoneController.text,
-                                        email: emailController.text,
-                                        date: deliveryDate!,
-                                        quantity: quantityController.text,
-                                        message: messageController.text,
-                                      );
+                                      EnquiryModel? enquiry = await controller
+                                          .submitForm(
+                                            name: nameController.text,
+                                            company: companyController.text,
+                                            number: phoneController.text,
+                                            email: emailController.text,
+                                            date: deliveryDate!,
+                                            quantity: quantityController.text,
+                                            message: messageController.text,
+                                          );
+                                      if (enquiry != null) {
+                                        openThankyouAlertBox(enquiry: enquiry);
+                                      }
                                     } else {
                                       if (deliveryDate == null) {
                                         customToast(
@@ -536,7 +583,7 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
 
   Widget _sectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.only(bottom: 12),
       child: Text(
         title,
         style: TextStyle(
@@ -552,59 +599,19 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
     return LayoutBuilder(
       builder: (context, constraints) {
         final columns = constraints.maxWidth < 600 ? 1 : 2;
-
         return GridView.count(
           crossAxisCount: columns,
           shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
+          padding: EdgeInsets.zero,
+          physics: const NeverScrollableScrollPhysics(
+            parent: BouncingScrollPhysics(),
+          ),
           crossAxisSpacing: 16,
-          mainAxisSpacing: 10,
+          mainAxisSpacing: 2,
           // childAspectRatio: 1.2,
-          mainAxisExtent: 70,
+          mainAxisExtent: 106,
           children: fields,
         );
-      },
-    );
-  }
-
-  Widget _textField(
-    TextEditingController textController,
-    String label, {
-    required FocusNode focusNode,
-    FocusNode? nextNode,
-    String? hint,
-    int maxLines = 1,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-    bool isMobile = false,
-  }) {
-    return TextFormField(
-      controller: textController,
-      keyboardType: keyboardType,
-      maxLines: maxLines,
-      validator: validator,
-      focusNode: focusNode,
-      maxLength: isMobile ? 10 : 100,
-      inputFormatters: isMobile
-          ? [FilteringTextInputFormatter.digitsOnly]
-          : null,
-      decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
-        alignLabelWithHint: maxLines > 1,
-        counterText: '',
-      ),
-      onFieldSubmitted: (value) {
-        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
-      },
-      onEditingComplete: () {
-        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
-      },
-      onSaved: (newValue) {
-        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
-      },
-      onTapOutside: (event) {
-        fieldFocusChange(currentFocus: focusNode, nextFocus: nextNode);
       },
     );
   }
@@ -629,13 +636,157 @@ class _CreateEnquiryScreenState extends State<CreateEnquiryScreen> {
     }
   }
 
-  void fieldFocusChange({
-    required FocusNode currentFocus,
-    FocusNode? nextFocus,
+  Future<dynamic> openThankyouAlertBox({
+    required EnquiryModel enquiry,
+    String? referenceCode,
   }) {
-    currentFocus.unfocus();
-    if (nextFocus != null) {
-      nextFocus.requestFocus();
-    }
+    return Get.dialog(
+      barrierDismissible: false,
+      // barrierColor: AppColors.sage.withValues(alpha: 0.4),
+      Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 560),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Container(
+                //   height: 88,
+                //   width: 88,
+                //   decoration: const BoxDecoration(
+                //     color: AppColors.sage,
+                //     shape: BoxShape.circle,
+                //   ),
+                //   child: const Icon(
+                //     Icons.check_circle_outline,
+                //     size: 52,
+                //     color: AppColors.primary,
+                //   ),
+                // ),
+                Card(
+                  color: AppColors.sage,
+                  clipBehavior: Clip.antiAlias,
+                  child: ClipRRect(
+                    borderRadius: BorderRadiusGeometry.circular(16),
+                    child: Image.asset(
+                      'assets/gif/success.gif',
+                      width: 140,
+                      height: 140,
+                      fit: BoxFit.contain,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 28),
+                Text(
+                  'Thank you!',
+                  style: Theme.of(context).textTheme.headlineLarge,
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'Your enquiry has been submitted successfully. '
+                  'Our team will contact you within 24 hours.',
+                  textAlign: TextAlign.center,
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+                const SizedBox(height: 22),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: AppColors.surface,
+                    border: Border.all(color: AppColors.border),
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Enquiry reference',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 6),
+                      SelectableText(
+                        referenceCode ?? enquiry.referenceCode ?? '',
+                        // style: TextStyle(
+                        //   fontWeight: FontWeight.w700,
+                        //   color: AppColors.darkGreen,
+                        //   fontSize: 18,
+                        // ),
+                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.inverseSurface,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      Text(
+                        'Selected products',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const SizedBox(height: 8),
+                      ...enquiry.products.map(
+                        (product) => Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Icon(
+                                Icons.check_circle_outline,
+                                size: 18,
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .inverseSurface,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  product.name,
+                                  style: Theme.of(context).textTheme.titleSmall
+                                      ?.copyWith(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inverseSurface,
+                                      ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 28),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Get.offAllNamed(AppRoutes.home),
+                    child: const Text('Back to Home'),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton(
+                    onPressed: () {
+                      CommonServices().openWhatsApp(
+                        referenceCode:
+                            referenceCode ?? enquiry.referenceCode ?? '',
+                        products: enquiry.products,
+                        qunatity: enquiry.quantity.toString(),
+                      );
+                    },
+                    child: const Text('Connect on Whatsapp'),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

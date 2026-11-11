@@ -13,12 +13,11 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
+    return Container(
+      padding: const EdgeInsets.all(20),
+      alignment: Alignment.topCenter,
       child: Column(
         spacing: 20,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Align(
             alignment: AlignmentGeometry.centerRight,
@@ -29,42 +28,68 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
               icon: const Icon(Icons.remove_circle),
             ),
           ),
-          sectionWidget(
-            title: 'Details',
-            fields: [
-              textFieldWidget(label: 'Full name', value: enquiry.name),
-              textFieldWidget(label: 'Company name', value: enquiry.company),
-              textFieldWidget(label: 'Phone number', value: enquiry.phone),
-              textFieldWidget(label: 'Email address', value: enquiry.email),
-            ],
+          Expanded(
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              padding: const EdgeInsets.only(bottom: 20),
+              child: Column(
+                spacing: 20,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  sectionWidget(
+                    title: 'Details',
+                    fields: [
+                      textFieldWidget(label: 'Full name', value: enquiry.name),
+                      textFieldWidget(
+                        label: 'Company name',
+                        value: enquiry.company,
+                      ),
+                      textFieldWidget(
+                        label: 'Phone number',
+                        value: enquiry.phone,
+                      ),
+                      textFieldWidget(
+                        label: 'Email address',
+                        value: enquiry.email,
+                      ),
+                    ],
+                  ),
+                  sectionWidget(
+                    title: 'Order requirements',
+                    fields: [
+                      textFieldWidget(
+                        label: 'Occasion',
+                        value: enquiry.occasion,
+                      ),
+                      textFieldWidget(
+                        label: 'Number of units',
+                        value: enquiry.quantity.toString(),
+                      ),
+                      textFieldWidget(
+                        label: 'Budget per unit *',
+                        value: enquiry.budget,
+                      ),
+                      textFieldWidget(
+                        label: 'Delivery date',
+                        value: DateFormat('dd MMM yyyy')
+                            .format(enquiry.deliveryDate),
+                      ),
+                      textFieldWidget(
+                        label: 'Customisation',
+                        value: enquiry.customisations.join(', '),
+                      ),
+                      textFieldWidget(
+                        label: 'Additional message',
+                        value: enquiry.message,
+                      ),
+                    ],
+                  ),
+                  productsWidget(),
+                ],
+              ),
+            ),
           ),
-          sectionWidget(
-            title: 'Order requirements',
-            fields: [
-              textFieldWidget(label: 'Occasion', value: enquiry.occasion),
-              textFieldWidget(
-                label: 'Number of units',
-                value: enquiry.quantity.toString(),
-              ),
-              textFieldWidget(
-                label: 'Budget per unit *',
-                value: enquiry.budget,
-              ),
-              textFieldWidget(
-                label: 'Delivery date',
-                value: DateFormat('dd MMM yyyy').format(enquiry.deliveryDate),
-              ),
-              textFieldWidget(
-                label: 'Customisation',
-                value: enquiry.customisations.join(', '),
-              ),
-              textFieldWidget(
-                label: 'Additional message',
-                value: enquiry.message,
-              ),
-            ],
-          ),
-          productsWidget(),
         ],
       ),
     );
@@ -133,6 +158,7 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
             : SizedBox(
                 height: 220,
                 child: ListView.separated(
+                  physics: const BouncingScrollPhysics(),
                   itemCount: enquiry.products.length,
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.only(bottom: 20),

@@ -13,7 +13,10 @@ class ProductTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Material(
       color: Theme.of(context).colorScheme.surface,
-      borderRadius: BorderRadius.circular(12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: AppColors.border, width: 1),
+      ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
@@ -24,7 +27,7 @@ class ProductTile extends StatelessWidget {
               flex: 6,
               child: Container(
                 // width: 48,
-                color: Theme.of(context).colorScheme.surface,
+                color: Theme.of(context).colorScheme.surfaceContainerLow,
                 child: Center(
                   child: productImage(imageUrl: product.imageUrl ?? ''),
                 ),

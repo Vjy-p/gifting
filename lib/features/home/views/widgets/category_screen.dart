@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/features/catalogue/controllers/catalogue_controller.dart';
@@ -28,6 +29,7 @@ class CategoryWidget extends StatelessWidget {
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: categories.length,
+            padding: EdgeInsets.zero,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               crossAxisSpacing: 16,
@@ -49,7 +51,19 @@ class CategoryWidget extends StatelessWidget {
                   catalogueController.selectCategory(item.$1);
                   Get.toNamed(AppRoutes.catalogue);
                 },
-              );
+              )
+                  .animate()
+                  .fadeIn(
+                    delay: (index * 80).ms,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .scale(
+                    begin: const Offset(0.94, 0.94),
+                    end: const Offset(1, 1),
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  );
             },
           );
         },

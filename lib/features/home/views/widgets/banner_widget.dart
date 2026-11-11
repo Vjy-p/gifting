@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/theme/app_colors.dart';
@@ -22,13 +23,28 @@ class BannerWidget extends GetView<CatalogueController> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             if (!isMobile) ...[
-              Text(
-                'CORPORATE GIFTING',
-                style: TextStyle(
-                  color: AppColors.primary,
-                  letterSpacing: 2,
-                  fontSize: isMobile ? 11 : 16,
-                  fontWeight: FontWeight.w700,
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  color: AppColors.sage,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: AppColors.border),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(Icons.workspace_premium_outlined, size: 16, color: AppColors.gold),
+                    const SizedBox(width: 6),
+                    Text(
+                      'CORPORATE GIFTING',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        letterSpacing: 1.5,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
                 ),
               ),
               const SizedBox(height: 18),
@@ -94,6 +110,26 @@ class BannerWidget extends GetView<CatalogueController> {
           );
         });
 
+        final animatedContent = content
+            .animate()
+            .fadeIn(duration: 500.ms, curve: Curves.easeOutCubic)
+            .slideY(
+              begin: 0.08,
+              end: 0,
+              duration: 500.ms,
+              curve: Curves.easeOutCubic,
+            );
+
+        final animatedImage = image
+            .animate()
+            .fadeIn(duration: 600.ms, curve: Curves.easeOutCubic)
+            .scale(
+              begin: const Offset(0.97, 0.97),
+              end: const Offset(1, 1),
+              duration: 600.ms,
+              curve: Curves.easeOutCubic,
+            );
+
         return Padding(
           padding: EdgeInsets.symmetric(
             horizontal: isMobile ? 24 : 64,
@@ -102,14 +138,18 @@ class BannerWidget extends GetView<CatalogueController> {
           child: isMobile
               ? Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [image, const SizedBox(height: 32), content],
+                  children: [
+                    animatedImage,
+                    const SizedBox(height: 32),
+                    animatedContent,
+                  ],
                 )
               : Row(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Expanded(flex: 5, child: content),
+                    Expanded(flex: 5, child: animatedContent),
                     const SizedBox(width: 56),
-                    Expanded(flex: 4, child: image),
+                    Expanded(flex: 4, child: animatedImage),
                   ],
                 ),
         );

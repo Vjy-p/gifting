@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_animate/flutter_animate.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_routes.dart';
 import 'package:gifting/core/theme/app_colors.dart';
@@ -18,11 +19,11 @@ class OccasionWidget extends StatelessWidget {
       child: LayoutBuilder(
         builder: (context, constraints) {
           final columns = constraints.maxWidth < 700 ? 2 : 3;
-
           return GridView.builder(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
             itemCount: occasions.length,
+            padding: EdgeInsets.zero,
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: columns,
               crossAxisSpacing: 16,
@@ -44,12 +45,19 @@ class OccasionWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
                     border: Border.all(color: AppColors.border),
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(14),
                   ),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(item.$2, color: AppColors.primary, size: 30),
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: AppColors.sage,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Icon(item.$2, color: AppColors.primary, size: 26),
+                      ),
                       const SizedBox(height: 12),
                       Text(
                         item.$1,
@@ -62,7 +70,19 @@ class OccasionWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-              );
+              )
+                  .animate()
+                  .fadeIn(
+                    delay: (index * 70).ms,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  )
+                  .slideY(
+                    begin: 0.1,
+                    end: 0,
+                    duration: 450.ms,
+                    curve: Curves.easeOutCubic,
+                  );
             },
           );
         },
