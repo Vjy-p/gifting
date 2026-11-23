@@ -17,22 +17,25 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return ProductModel(
-      id: fields[0] as String,
-      name: fields[1] as String,
-      category: fields[2] as String,
-      minPrice: fields[3] as int,
-      maxPrice: fields[4] as int,
-      description: fields[5] as String,
+      id: fields[0] as String? ?? '',
+      name: fields[1] as String? ?? '',
+      category: fields[2] as String? ?? '',
+      price: fields[3] as int? ?? 0,
+      description: fields[5] as String? ?? '',
       imageUrl: fields[6] as String?,
-      occasions: (fields[7] as List).cast<String>(),
-      customisations: (fields[8] as List).cast<String>(),
+      occasions: (fields[7] as List?)?.cast<String>() ?? const [],
+      customisations: (fields[8] as List?)?.cast<String>() ?? const [],
+      quantity: fields[9] as int? ?? 20,
+      selectedOccasions: (fields[10] as List?)?.cast<String>() ?? const [],
+      selectedCustomisations: (fields[11] as List?)?.cast<String>() ?? const [],
+      message: fields[12] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, ProductModel obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(12)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -40,9 +43,7 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       ..writeByte(2)
       ..write(obj.category)
       ..writeByte(3)
-      ..write(obj.minPrice)
-      ..writeByte(4)
-      ..write(obj.maxPrice)
+      ..write(obj.price)
       ..writeByte(5)
       ..write(obj.description)
       ..writeByte(6)
@@ -50,7 +51,15 @@ class ProductModelAdapter extends TypeAdapter<ProductModel> {
       ..writeByte(7)
       ..write(obj.occasions)
       ..writeByte(8)
-      ..write(obj.customisations);
+      ..write(obj.customisations)
+      ..writeByte(9)
+      ..write(obj.quantity)
+      ..writeByte(10)
+      ..write(obj.selectedOccasions)
+      ..writeByte(11)
+      ..write(obj.selectedCustomisations)
+      ..writeByte(12)
+      ..write(obj.message);
   }
 
   @override

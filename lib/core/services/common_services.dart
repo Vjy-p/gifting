@@ -21,7 +21,7 @@ class CommonServices {
       }
 
       for (final p in products) {
-        message += '\nName : ${p.name}\nPrice : ${p.priceRange}';
+        message += '\nName : ${p.name}\nPrice : ${p.price}';
       }
 
       if (qunatity != null && qunatity.isNotEmpty) {

@@ -10,4 +10,13 @@ abstract class AppRoutes {
   static const login = '/login';
   static const signup = '/signup';
   static const home = '/home';
+  static const order = '/order';
+  static const orderDetails = '/order-details';
+  static const support = '/support';
+  // static const payment = '/payment';
+  static const paymentHistory = '/payment-history';
+  static const cart = '/cart';
+  static const notifications = '/notifications';
+  static const profile = '/profile';
+  static const editProfile = '/edit-profile';
 }

@@ -55,6 +55,17 @@ class AppColors {
   static Color get chipBackground => sage;
   static Color get accentGold => gold;
 
+  static Color get surfaceElevated => elevatedSurface;
+  static Color get surfacePrimary => surface;
+  static Color get borderSubtle => border;
+  static Color get textPrimary => text;
+  static Color get textSecondary => secondaryText;
+  static Color get backgroundPrimary => background;
+  static Color get darkBlue => const Color(0xFF0D251C);
+  static Color get textMuted => secondaryText;
+  static Color get actionPrimary => primary;
+  static Color get backgroundSecondary => elevatedSurface;
+
   static Color ofPrimary(BuildContext context) =>
       Theme.of(context).brightness == Brightness.dark
       ? darkPrimary

@@ -11,6 +11,7 @@ import 'package:gifting/features/products/views/product_tile.dart';
 import 'package:paginated_list/paginated_list.dart';
 
 import '../../../app/routes/app_routes.dart';
+import '../../cart/controllers/cart_controller.dart';
 import '../../products/models/product_model.dart';
 import '../controllers/catalogue_controller.dart';
 
@@ -27,6 +28,21 @@ class CatalogueScreen extends GetView<CatalogueController> {
         title: const Text('Tribe Green'),
         backgroundColor: AppColors.surface,
         actions: [
+          Obx(() {
+            final cartController = Get.isRegistered<CartController>()
+                ? Get.find<CartController>()
+                : Get.put(CartController());
+            final count = cartController.cart.length;
+            return Badge(
+              isLabelVisible: count > 0,
+              label: Text('$count'),
+              child: IconButton(
+                tooltip: 'Cart',
+                icon: const Icon(Icons.shopping_bag_outlined),
+                onPressed: () => Get.toNamed(AppRoutes.cart),
+              ),
+            );
+          }),
           const ThemeToggleButton(),
           TextButton(
             onPressed: () => Get.offAllNamed(AppRoutes.home),

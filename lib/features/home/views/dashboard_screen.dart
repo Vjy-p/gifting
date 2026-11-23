@@ -3,18 +3,18 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/theme/app_colors.dart';
-import 'package:gifting/core/theme/theme_toggle_button.dart';
 import 'package:gifting/core/widgets/retry_widget.dart';
 import 'package:gifting/core/widgets/shimmer_loading.dart';
+import 'package:gifting/features/cart/views/cart_bell_button.dart';
 import 'package:gifting/features/home/views/widgets/banner_widget.dart';
 import 'package:gifting/features/home/views/widgets/bulk_order_widget.dart';
 import 'package:gifting/features/home/views/widgets/category_screen.dart';
 import 'package:gifting/features/home/views/widgets/features_widget.dart';
 import 'package:gifting/features/home/views/widgets/footer_widget.dart';
 import 'package:gifting/features/home/views/widgets/how_it_works_widget.dart';
-import 'package:gifting/features/home/views/widgets/logout_dialog_box.dart';
 import 'package:gifting/features/home/views/widgets/occasion_widget.dart';
 import 'package:gifting/features/home/views/widgets/products_widget.dart';
+import 'package:gifting/features/notifications/views/widgets/notification_bell_button.dart';
 
 import '../../catalogue/controllers/catalogue_controller.dart';
 
@@ -68,22 +68,7 @@ class DashboardScreen extends GetView<CatalogueController> {
               ],
             ),
             actionsPadding: const EdgeInsets.only(right: 8),
-            actions: [
-              if (isMobile) ...[
-                const ThemeToggleButton(),
-                IconButton(
-                  tooltip: 'Sign out',
-                  onPressed: () {
-                    openLogoutDialogBox();
-                  },
-                  icon: const Icon(
-                    Icons.logout,
-                    size: 20,
-                    fontWeight: FontWeight.w900,
-                  ),
-                ),
-              ],
-            ],
+            actions: const [CartBellButton(), NotificationBellButton()],
           ),
           body: RefreshIndicator(
             onRefresh: () async {

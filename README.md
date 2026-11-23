@@ -12,22 +12,21 @@ The project consists of three applications:
 
 ## 2. Technology Stack
 
-| Technology        | Purpose                                                  |
-| ----------------- | -------------------------------------------------------- |
-| Flutter & Dart    | Android application and responsive web interfaces        |
-| GetX              | State management, dependency injection and navigation    |
-| Supabase          | Authentication, PostgreSQL database and backend services |
-| Hive              | Local storage for customer enquiry history               |
-| SharedPreferences | Local application preferences                            |
-| Firebase          | Push notification integration, where configured          |
+| Technology        | Purpose                                                      |
+| ----------------- | ------------------------------------------------------------ |
+| Flutter & Dart    | Android application and responsive web interfaces            |
+| GetX              | State management, dependency injection and navigation        |
+| Firebase          | Authentication, Cloud Firestore database and Cloud Messaging |
+| Hive              | Local storage for customer enquiry history                   |
+| SharedPreferences | Local application preferences                                |
 
 **Why this stack?**
 
-Flutter allows Android and web interfaces to share reusable components. GetX simplifies state management and navigation. Supabase provides authentication and database functionality without requiring a separate backend server. Hive provides local storage for enquiry history.
+Flutter allows Android and web interfaces to share reusable components. GetX simplifies state management and navigation. Firebase provides authentication, Cloud Firestore database functionality, and push notifications without requiring a separate backend server. Hive provides local storage for enquiry history.
 
 ## 3. How to Run
 
-Prerequisites: Flutter SDK, Dart SDK, Chrome and a configured Supabase project.
+Prerequisites: Flutter SDK, Dart SDK, Chrome and a configured Firebase project.
 
 ```bash
 # Install dependencies
@@ -49,9 +48,9 @@ flutter build apk --release
 flutter build web --release
 ```
 
-Configure the Supabase URL and publishable/anon key using the project's environment configuration before running the applications.
+Firebase is initialized using FlutterFire configuration in `lib/firebase_options.dart`.
 
-Never commit environment files containing real credentials or Supabase service-role keys.
+Never commit environment files containing sensitive credentials.
 
 ## 4. Git and Deployment
 
@@ -59,13 +58,13 @@ Never commit environment files containing real credentials or Supabase service-r
 - Flutter Web is built using `flutter build web --release`.
 - The generated `build/web` directory is deployed using GitHub Pages and GitHub Actions.
 - GitHub Pages requires the correct repository base path (`/gifting/`).
-- Supabase authentication redirect URLs and database RLS policies must be configured for production.
+- Firestore security rules should be configured according to your production requirements.
 
 ## 5. Incomplete Work and Known Limitations
 
-- Enquiry pagination should be moved to Supabase server-side queries for better performance with larger datasets.
+- Enquiry pagination should be moved to Firestore cursors/server-side queries for better performance with larger datasets.
 - Email and push notification delivery require production configuration and testing.
-- Supabase schema, RLS policies and deployment secrets must be maintained securely.
+- Firestore security rules and deployment secrets must be maintained securely.
 
 ## 6. Improvements with More Time
 

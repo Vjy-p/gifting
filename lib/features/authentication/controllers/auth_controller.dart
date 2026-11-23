@@ -1,9 +1,9 @@
 import 'dart:developer';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 import 'package:gifting/core/widgets/custom_toast.dart';
 import 'package:gifting/features/authentication/services/auth_services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/routes/app_routes.dart';
 
@@ -57,10 +57,10 @@ class AuthController extends GetxController {
       if (response == true) {
         Get.offAllNamed(AppRoutes.home);
       }
-    } on AuthException catch (error, stackTree) {
+    } on FirebaseAuthException catch (error, stackTree) {
       isLoading.value = false;
       log('Error Signup $error, $stackTree ');
-      customToast(title: 'Signup failed', text: error.message);
+      customToast(title: 'Signup failed', text: error.message ?? 'An error occurred during signup.');
     } catch (e, stackTree) {
       log('Error signup $e, $stackTree');
       customToast(
@@ -91,9 +91,9 @@ class AuthController extends GetxController {
       if (response == true) {
         Get.offAllNamed(AppRoutes.home);
       }
-    } on AuthException catch (error, stackTree) {
+    } on FirebaseAuthException catch (error, stackTree) {
       log('Error login $error, $stackTree ');
-      customToast(title: 'Login failed', text: error.message);
+      customToast(title: 'Login failed', text: error.message ?? 'An error occurred during sign in.');
     } catch (_) {
       customToast(
         title: 'Unable to sign in',

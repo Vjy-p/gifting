@@ -1,16 +1,17 @@
 import 'dart:ui';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:gifting/app/routes/app_pages.dart';
 import 'package:gifting/app/routes/app_routes.dart';
-import 'package:gifting/core/constants/constants.dart';
 import 'package:gifting/core/services/hive_services.dart';
 import 'package:gifting/core/services/initial_bindings.dart';
+import 'package:gifting/core/services/notification_service.dart';
 import 'package:gifting/core/theme/app_theme.dart';
 import 'package:gifting/core/theme/theme_controller.dart';
 import 'package:gifting/core/widgets/restart_widget.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:gifting/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -21,11 +22,14 @@ Future<void> main() async {
 Future initialise() async {
   await Future.wait([
     HiveService.init(),
-    Supabase.initialize(
-      url: Constants.supabaseUrl,
-      publishableKey: Constants.supbasePublishableKey,
-    ),
+    Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform),
   ]);
+  await NotificationService.initialize();
+  // await FirebaseAppCheck.instance.activate(
+  //   providerAndroid: const AndroidDebugProvider(),
+  //   providerApple: const AppleAppAttestProvider(),
+  //   providerWeb: WebDebugProvider(),
+  // );
   Get.put(ThemeController(), permanent: true);
 }
 

@@ -66,10 +66,7 @@ class EnquiryDetailsScreen extends GetView<EnquiryController> {
                         label: 'Number of units',
                         value: enquiry.quantity.toString(),
                       ),
-                      textFieldWidget(
-                        label: 'Budget per unit *',
-                        value: enquiry.budget,
-                      ),
+                      textFieldWidget(label: 'Budget', value: enquiry.budget),
                       textFieldWidget(
                         label: 'Delivery date',
                         value: DateFormat('dd MMM yyyy')

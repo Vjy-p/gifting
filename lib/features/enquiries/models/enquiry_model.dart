@@ -129,7 +129,7 @@ class EnquiryModel {
     };
   }
 
-  /// Data received when reading an enquiry from Supabase.
+  /// Data received when reading an enquiry from Firebase.
   factory EnquiryModel.fromJson(Map<String, dynamic> json) {
     final rawProducts = json['products'] as List? ?? [];
 
@@ -143,7 +143,7 @@ class EnquiryModel {
       occasion: json['occasion']?.toString() ?? '',
       quantity: (json['quantity'] as num?)?.toInt() ?? 0,
       budget: json['budget']?.toString() ?? '',
-      deliveryDate: DateTime.parse(json['delivery_date'].toString()),
+      deliveryDate: _parseDateTime(json['delivery_date']) ?? DateTime.now(),
       products: rawProducts.map((item) {
         if (item is Map) {
           return ProductModel.fromJson(Map<String, dynamic>.from(item));
@@ -154,8 +154,7 @@ class EnquiryModel {
           id: '',
           name: item.toString(),
           category: '',
-          minPrice: 0,
-          maxPrice: 0,
+          price: 0,
           description: '',
         );
       }).toList(),
@@ -163,10 +162,20 @@ class EnquiryModel {
       message: json['message']?.toString() ?? '',
       source: json['source']?.toString() ?? 'website',
       status: json['status']?.toString() ?? 'New',
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.tryParse(json['created_at'].toString()),
+      createdAt: _parseDateTime(json['created_at']),
     );
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    try {
+      final dynamic v = value;
+      return v.toDate() as DateTime;
+    } catch (_) {
+      return DateTime.tryParse(value.toString());
+    }
   }
 
   static String _dateOnly(DateTime date) {

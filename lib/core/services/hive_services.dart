@@ -8,6 +8,7 @@ class HiveService {
   static const String settingsBoxName = 'settings';
   static const String userBoxName = 'user';
   static const String loginBoxName = 'login';
+  static const String cartBoxName = 'cart';
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -16,14 +17,28 @@ class HiveService {
     Hive.registerAdapter(EnquiryModelAdapter());
     Hive.registerAdapter(UserModelAdapter());
 
-    await Hive.openBox<EnquiryModel>(enquiryBoxName);
-    await Hive.openBox(settingsBoxName);
-    await Hive.openBox<UserModel>(userBoxName);
-    await Hive.openBox<bool>(loginBoxName);
+    await _openBox(settingsBoxName);
+    await _openBox<UserModel>(userBoxName);
+    await _openBox<bool>(loginBoxName);
+    await _openBox<EnquiryModel>(enquiryBoxName);
+    await _openBox<ProductModel>(cartBoxName);
+  }
+
+  static Future<Box<T>> _openBox<T>(String boxName) async {
+    try {
+      return await Hive.openBox<T>(boxName);
+    } catch (_) {
+      await Hive.deleteBoxFromDisk(boxName);
+      return await Hive.openBox<T>(boxName);
+    }
   }
 
   static Box<EnquiryModel> get enquiryBox {
     return Hive.box<EnquiryModel>(enquiryBoxName);
+  }
+
+  static Box<ProductModel> get cartBox {
+    return Hive.box<ProductModel>(cartBoxName);
   }
 
   static Box get settingsBox {

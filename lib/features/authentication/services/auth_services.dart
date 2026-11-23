@@ -1,14 +1,18 @@
 import 'dart:developer';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:gifting/core/services/notification_service.dart';
 import 'package:gifting/features/authentication/models/user_model.dart';
 import 'package:gifting/features/authentication/services/local_auth_services.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 class AuthServices {
-  AuthServices({SupabaseClient? client})
-    : _client = client ?? Supabase.instance.client;
+  AuthServices({FirebaseAuth? auth, FirebaseFirestore? firestore})
+    : _auth = auth ?? FirebaseAuth.instance,
+      _firestore = firestore ?? FirebaseFirestore.instance;
 
-  final SupabaseClient _client;
+  final FirebaseAuth _auth;
+  final FirebaseFirestore _firestore;
 
   Future<bool?> signUp({
     required String name,
@@ -18,27 +22,41 @@ class AuthServices {
     required String password,
   }) async {
     try {
-      Map<String, dynamic> data = {
-        'name': name.trim(),
-        'mobile': mobile.trim(),
-        'company': companyName,
-      };
-      log('data $data $email');
-      final AuthResponse resp = await _client.auth.signUp(
+      final credential = await _auth.createUserWithEmailAndPassword(
         email: email.trim(),
         password: password,
-        data: data,
       );
-      log('signup resp: ${resp.user}');
-      if (resp.user != null) {
+
+      final user = credential.user;
+      log('signup user: ${user?.uid}');
+      if (user != null) {
+        await user.updateDisplayName(name.trim());
+
+        final profile = UserModel(
+          id: user.uid,
+          name: name.trim(),
+          email: email.trim(),
+          mobile: mobile.trim(),
+          company: companyName?.trim() ?? '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+
+        await _firestore
+            .collection('profiles')
+            .doc(user.uid)
+            .set(profile.toJson());
+
+        await NotificationService.saveTokenForUser(user.uid);
+
         await LocalAuthServices.setUserLoggedIn(value: true);
-        await getUserDetails();
+        await LocalAuthServices.saveUserDetails(profile);
         return true;
       } else {
         return false;
       }
-    } on PostgrestException catch (error, stackTrace) {
-      log('Error Supabase signup: ${error.message}, $stackTrace');
+    } on FirebaseAuthException catch (error, stackTrace) {
+      log('Error Firebase signup: ${error.message}, $stackTrace');
       log('Code: ${error.code}');
       rethrow;
     } catch (e, stackTree) {
@@ -49,20 +67,24 @@ class AuthServices {
 
   Future<bool?> login({required String email, required String password}) async {
     try {
-      final AuthResponse resp = await _client.auth.signInWithPassword(
+      final credential = await _auth.signInWithEmailAndPassword(
         email: email.trim(),
         password: password,
       );
-      log('login resp: ${resp.user}');
-      if (resp.user != null) {
-        await LocalAuthServices.setUserLoggedIn(value: true);
-        await getUserDetails();
+      final user = credential.user;
+      log('login user: ${user?.uid}');
+      if (user != null) {
+        await Future.wait([
+          LocalAuthServices.setUserLoggedIn(value: true),
+          getUserDetails(),
+          NotificationService.saveTokenForUser(user.uid),
+        ]);
         return true;
       } else {
         return false;
       }
-    } on PostgrestException catch (error, stackTrace) {
-      log('Error Supabase login: ${error.message}, $stackTrace');
+    } on FirebaseAuthException catch (error, stackTrace) {
+      log('Error Firebase login: ${error.message}, $stackTrace');
       log('Code: ${error.code}');
       rethrow;
     } catch (e, stackTree) {
@@ -73,22 +95,30 @@ class AuthServices {
 
   Future<UserModel?> getUserDetails() async {
     try {
-      final user = _client.auth.currentUser;
+      final user = _auth.currentUser;
 
       if (user == null) return null;
 
-      final userResp = await _client
-          .from('profiles')
-          .select()
-          .eq('id', user.id)
-          .maybeSingle();
-      log('get user $userResp');
-      if (userResp != null) {
-        UserModel? u = UserModel.fromJson(userResp);
-        await LocalAuthServices.saveUserDetails(u);
-        return u;
+      final doc = await _firestore.collection('profiles').doc(user.uid).get();
+      log('get user doc exists: ${doc.exists}');
+      if (doc.exists && doc.data() != null) {
+        final data = Map<String, dynamic>.from(doc.data()!);
+        data['id'] = user.uid;
+        UserModel profile = UserModel.fromJson(data);
+        await LocalAuthServices.saveUserDetails(profile);
+        return profile;
       } else {
-        return null;
+        final profile = UserModel(
+          id: user.uid,
+          name: user.displayName ?? '',
+          email: user.email ?? '',
+          mobile: user.phoneNumber ?? '',
+          company: '',
+          createdAt: DateTime.now(),
+          updatedAt: DateTime.now(),
+        );
+        await LocalAuthServices.saveUserDetails(profile);
+        return profile;
       }
     } catch (e, stackTree) {
       log('Error get user details: $e, $stackTree');
@@ -96,9 +126,66 @@ class AuthServices {
     }
   }
 
+  Future<UserModel> updateProfile({
+    required String name,
+    required String mobile,
+    required String company,
+  }) async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        throw Exception('User is not signed in');
+      }
+
+      final now = DateTime.now();
+
+      // Update Firebase Auth display name
+      if (user.displayName != name.trim()) {
+        await user.updateDisplayName(name.trim());
+      }
+
+      // Update Firestore profiles collection
+      final updateData = <String, dynamic>{
+        'name': name.trim(),
+        'mobile': mobile.trim(),
+        'company': company.trim(),
+        'updated_at': now.toIso8601String(),
+      };
+
+      await _firestore
+          .collection('profiles')
+          .doc(user.uid)
+          .set(updateData, SetOptions(merge: true));
+
+      // Get existing details or create updated user model
+      final existing = await LocalAuthServices.getUserDetails();
+      final updatedUser = UserModel(
+        id: user.uid,
+        name: name.trim(),
+        email: user.email ?? existing?.email ?? '',
+        mobile: mobile.trim(),
+        company: company.trim(),
+        createdAt: existing?.createdAt ?? now,
+        updatedAt: now,
+      );
+
+      // Save to local Hive cache
+      await LocalAuthServices.saveUserDetails(updatedUser);
+      log('User profile updated successfully: ${updatedUser.name}');
+      return updatedUser;
+    } catch (e, stackTrace) {
+      log('Error updating profile: $e, $stackTrace');
+      rethrow;
+    }
+  }
+
   Future<void> logout() async {
     try {
-      await _client.auth.signOut();
+      final user = _auth.currentUser;
+      if (user != null) {
+        await NotificationService.removeTokenOnLogout(user.uid);
+      }
+      await _auth.signOut();
       await LocalAuthServices.setUserLoggedIn(value: false);
     } catch (e, stackTree) {
       log('Error during sign out: $e, $stackTree');

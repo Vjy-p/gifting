@@ -207,7 +207,7 @@ class EnquiryController extends GetxController {
                 ),
               ),
               title: Text(product.name),
-              subtitle: Text(product.priceRange),
+              subtitle: Text(product.price.toString()),
               contentPadding: EdgeInsets.zero,
             ),
           );
@@ -288,15 +288,46 @@ class EnquiryController extends GetxController {
     try {
       isSubmitting.value = true;
 
-      final reference = await enquiryServices.submit(enquiry);
-      enquiry = enquiry.copyWith(referenceCode: reference);
+      // Check if any product in selectedProducts has already been enquiried
+      EnquiryModel? existingMatch;
+      for (final p in selectedProducts) {
+        final match = localEnquiryServices.findEnquiryByProduct(p);
+        if (match != null) {
+          existingMatch = match;
+          break;
+        }
+      }
 
-      // Get.offNamed(
-      //   AppRoutes.thankYou,
-      //   arguments: {'reference': reference, 'products': enquiry.products},
-      // );
+      if (existingMatch != null) {
+        // Product is already enquiried -> Update the existing enquiry
+        final updatedEnquiry = existingMatch.copyWith(
+          name: name.trim(),
+          company: company.trim(),
+          phone: number.trim(),
+          email: email.trim(),
+          occasion: selectedOccasion.value!,
+          quantity: quantity0,
+          budget: selectedBudget.value!,
+          deliveryDate: date,
+          products: selectedProducts.toList(),
+          customisations: customisations.toList(),
+          message: message?.trim() ?? existingMatch.message,
+        );
 
-      await localEnquiryServices.saveEnquiry(enquiry);
+        // Update in backend Firestore
+        await enquiryServices.update(updatedEnquiry);
+        // Update in local Hive
+        await localEnquiryServices.saveEnquiry(updatedEnquiry);
+        enquiry = updatedEnquiry;
+        log('Updated existing enquiry: ${existingMatch.referenceCode}');
+      } else {
+        // Only new products -> Submit new enquiry
+        final reference = await enquiryServices.submit(enquiry);
+        enquiry = enquiry.copyWith(referenceCode: reference);
+        await localEnquiryServices.saveEnquiry(enquiry);
+        log('Created new enquiry: $reference');
+      }
+
       clearData();
       loadEnquiries();
       return enquiry;

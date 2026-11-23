@@ -68,7 +68,7 @@ class UserModel {
     };
   }
 
-  /// Data received when reading an enquiry from Supabase.
+  /// Data received when reading a user profile from Firebase.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       id: json['id']?.toString(),
@@ -76,12 +76,20 @@ class UserModel {
       email: json['email']?.toString() ?? '',
       mobile: json['mobile']?.toString() ?? '',
       company: json['company']?.toString() ?? '',
-      createdAt: json['created_at'] == null
-          ? null
-          : DateTime.tryParse(json['created_at'].toString()),
-      updatedAt: json['updated_at'] == null
-          ? null
-          : DateTime.tryParse(json['updated_at'].toString()),
+      createdAt: _parseDateTime(json['created_at']),
+      updatedAt: _parseDateTime(json['updated_at']),
     );
+  }
+
+  static DateTime? _parseDateTime(dynamic value) {
+    if (value == null) return null;
+    if (value is DateTime) return value;
+    if (value is String) return DateTime.tryParse(value);
+    try {
+      final dynamic v = value;
+      return v.toDate() as DateTime;
+    } catch (_) {
+      return DateTime.tryParse(value.toString());
+    }
   }
 }

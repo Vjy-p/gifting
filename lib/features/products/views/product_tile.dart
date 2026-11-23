@@ -62,7 +62,7 @@ class ProductTile extends StatelessWidget {
                       ),
                     ),
                     Text(
-                      '${product.priceRange} / unit',
+                      '${product.price} / unit',
                       style: TextStyle(
                         color: AppColors.secondaryText,
                         fontSize: 12,
