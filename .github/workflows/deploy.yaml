@@ -43,7 +43,7 @@ jobs:
 
           printf '%s' "$FIREBASE_OPTIONS" > lib/firebase_options.dart
 
-          cat > .env <<EOF
+          cat > keys.env <<EOF
           AI_KEY=$AI_KEY
           RAZORPAY_KEY=$RAZORPAY_KEY
           EOF
