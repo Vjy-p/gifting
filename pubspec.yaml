@@ -23,7 +23,6 @@ dependencies:
   paginated_list: ^1.2.3
   flutter_animate: ^4.5.2
   flutter_native_splash: ^2.4.8
-<<<<<<< HEAD
   image_picker: ^1.2.4
   google_generative_ai: ^0.4.7
   flutter_markdown_plus: ^1.0.12
@@ -35,8 +34,6 @@ dependencies:
   razorpay_flutter: ^1.4.7
   uuid: ^4.6.0
   flutter_local_notifications: ^23.0.3
-=======
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
 dev_dependencies:
   flutter_test:
