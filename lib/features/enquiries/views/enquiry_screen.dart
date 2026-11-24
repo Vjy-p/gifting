@@ -22,11 +22,7 @@ class EnquiryScreen extends GetView<EnquiryController> {
         return Scaffold(
           extendBodyBehindAppBar: true,
           appBar: AppBar(
-<<<<<<< HEAD
             // automaticallyImplyLeading: false,
-=======
-            automaticallyImplyLeading: false,
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
             elevation: 0,
             surfaceTintColor: Colors.transparent,
             backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow

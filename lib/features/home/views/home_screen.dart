@@ -1,17 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:gifting/core/theme/theme_toggle_button.dart';
-<<<<<<< HEAD
 import 'package:gifting/features/cart/views/cart_bell_button.dart';
 import 'package:gifting/features/home/views/dashboard_screen.dart';
 import 'package:gifting/features/home/views/widgets/logout_dialog_box.dart';
 import 'package:gifting/features/notifications/views/notifications_screen.dart';
 import 'package:gifting/features/order/views/order_screen.dart';
 import 'package:gifting/features/profile/views/profile_dashboard_screen.dart';
-=======
-import 'package:gifting/features/enquiries/views/enquiry_screen.dart';
-import 'package:gifting/features/home/views/dashboard_screen.dart';
-import 'package:gifting/features/home/views/widgets/logout_dialog_box.dart';
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -22,7 +16,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
-<<<<<<< HEAD
   List<Widget> get screens => [
     const DashboardScreen(),
     // const EnquiryScreen(),
@@ -31,9 +24,6 @@ class _HomeScreenState extends State<HomeScreen> {
     const ProfileDashboardScreen(),
     const NotificationsScreen(),
   ];
-=======
-  List<Widget> get screens => [const DashboardScreen(), const EnquiryScreen()];
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
   @override
   Widget build(BuildContext context) {
@@ -58,11 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: Column(
                           spacing: 2,
                           children: [
-<<<<<<< HEAD
                             const CartBellButton(),
                             // const NotificationBellButton(),
-=======
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                             const ThemeToggleButton(),
                             IconButton(
                               tooltip: 'Sign out',
@@ -83,7 +70,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icon(Icons.home_outlined),
                           selectedIcon: Icon(Icons.home),
                           label: Text('Home'),
-<<<<<<< HEAD
                         ),
                         // NavigationRailDestination(
                         //   icon: Icon(Icons.shopping_cart_outlined),
@@ -105,13 +91,6 @@ class _HomeScreenState extends State<HomeScreen> {
                           icon: Icon(Icons.notifications_outlined),
                           selectedIcon: Icon(Icons.notifications),
                           label: Text('Alerts'),
-=======
-                        ),
-                        NavigationRailDestination(
-                          icon: Icon(Icons.query_stats_outlined),
-                          selectedIcon: Icon(Icons.query_stats),
-                          label: Text('Enquiry'),
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                         ),
                       ],
                       selectedIndex: selectedIndex,
@@ -132,16 +111,12 @@ class _HomeScreenState extends State<HomeScreen> {
           // ),
           bottomNavigationBar: isMobile
               ? BottomNavigationBar(
-<<<<<<< HEAD
                   type: BottomNavigationBarType.fixed,
-=======
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                   items: const [
                     BottomNavigationBarItem(
                       icon: Icon(Icons.home_outlined),
                       activeIcon: Icon(Icons.home),
                       label: 'Home',
-<<<<<<< HEAD
                     ),
                     // BottomNavigationBarItem(
                     //   icon: Icon( Icons.shopping_cart_outlined),
@@ -162,13 +137,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       icon: Icon(Icons.notifications_outlined),
                       activeIcon: Icon(Icons.notifications),
                       label: 'Alerts',
-=======
-                    ),
-                    BottomNavigationBarItem(
-                      icon: Icon(Icons.query_stats_outlined),
-                      activeIcon: Icon(Icons.query_stats),
-                      label: 'Enquiry',
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                     ),
                   ],
                   currentIndex: selectedIndex,

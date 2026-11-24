@@ -31,11 +31,7 @@ class HowItWorksWidget extends StatelessWidget {
               crossAxisSpacing: 20,
               mainAxisSpacing: 20,
               childAspectRatio: columns == 1
-<<<<<<< HEAD
                   ? 3.4
-=======
-                  ? 3.5
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                   : constraints.maxWidth < 1000
                   ? 1.2
                   : 2,
@@ -44,7 +40,6 @@ class HowItWorksWidget extends StatelessWidget {
               final step = steps[index];
 
               return Container(
-<<<<<<< HEAD
                     padding: const EdgeInsets.all(18),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
@@ -86,49 +81,6 @@ class HowItWorksWidget extends StatelessWidget {
                       ],
                     ),
                   )
-=======
-                padding: const EdgeInsets.all(18),
-                decoration: BoxDecoration(
-                  color: Theme.of(context).colorScheme.surface,
-                  borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: AppColors.border),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: [
-                    Text(
-                      step.$1,
-                      style: TextStyle(
-                        color: AppColors.gold,
-                        fontSize: isMobile ? 18 : 26,
-                        fontWeight: FontWeight.w700,
-                        letterSpacing: -0.5,
-                      ),
-                    ),
-                    Text(
-                      step.$2,
-                      style: TextStyle(
-                        color: AppColors.darkGreen,
-                        fontSize: isMobile ? 14 : 17,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    Text(
-                      step.$3,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        color: AppColors.secondaryText,
-                        fontSize: isMobile ? 12 : 14,
-                        fontWeight: FontWeight.w400,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              )
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
                   .animate()
                   .fadeIn(
                     delay: (index * 100).ms,
