@@ -158,7 +158,7 @@ class AuthServices {
           .set(updateData, SetOptions(merge: true));
 
       // Get existing details or create updated user model
-      final existing = await LocalAuthServices.getUserDetails();
+      final existing = LocalAuthServices.getUserDetails();
       final updatedUser = UserModel(
         id: user.uid,
         name: name.trim(),

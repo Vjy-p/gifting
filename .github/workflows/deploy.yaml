@@ -30,6 +30,24 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Create environment configuration
+        env:
+          FIREBASE_OPTIONS: ${{ secrets.FIREBASE_OPTIONS_DART }}
+          AI_KEY: ${{ secrets.AI_KEY }}
+          RAZORPAY_KEY: ${{ secrets.RAZORPAY_KEY }}
+        run: |
+          if [ -z "$FIREBASE_OPTIONS" ]; then
+            echo "Firebase options secret missing"
+            exit 1
+          fi
+
+          printf '%s' "$FIREBASE_OPTIONS" > lib/firebase_options.dart
+
+          cat > .env <<EOF
+          AI_KEY=$AI_KEY
+          RAZORPAY_KEY=$RAZORPAY_KEY
+          EOF
+
       - name: Build Flutter Web
         run: |
           flutter build web \

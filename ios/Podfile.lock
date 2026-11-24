@@ -1295,6 +1295,8 @@ PODS:
     - nanopb (~> 3.30910.0)
   - FirebaseSharedSwift (12.19.0)
   - Flutter (1.0.0)
+  - flutter_local_notifications (0.0.1):
+    - Flutter
   - GoogleDataTransport (10.1.1):
     - nanopb (~> 3.30910.0)
     - PromisesObjC (~> 2.4)
@@ -1446,6 +1448,7 @@ DEPENDENCIES:
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - firebase_messaging (from `.symlinks/plugins/firebase_messaging/ios`)
   - Flutter (from `Flutter`)
+  - flutter_local_notifications (from `.symlinks/plugins/flutter_local_notifications/ios`)
   - image_picker_ios (from `.symlinks/plugins/image_picker_ios/ios`)
   - razorpay_flutter (from `.symlinks/plugins/razorpay_flutter/ios`)
   - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
@@ -1495,6 +1498,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_messaging/ios"
   Flutter:
     :path: Flutter
+  flutter_local_notifications:
+    :path: ".symlinks/plugins/flutter_local_notifications/ios"
   image_picker_ios:
     :path: ".symlinks/plugins/image_picker_ios/ios"
   razorpay_flutter:
@@ -1527,6 +1532,7 @@ SPEC CHECKSUMS:
   FirebaseMessaging: c15f48126adbe8b4d3238a5e1fa24bab3ad3e472
   FirebaseSharedSwift: c91f36aeaa566e12b682caacc40d34c8303c3124
   Flutter: 71a624a5bc0c04062bf19101d501e466baf2fb47
+  flutter_local_notifications: eda81afddbf18f8589f6ec069ce593c4c6378769
   GoogleDataTransport: a24e58982ab3ba2f64d79613e027fe7f57e88539
   GoogleUtilities: 7dc09b3fa9ecb5c2298b952313d14628b61b9da3
   "gRPC-C++": cc207623316fb041a7a3e774c252cf68a058b9e8

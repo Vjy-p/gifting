@@ -24,13 +24,14 @@ migrate_working_dir/
 #.vscode/
 
 **.env
-# keys.env
+keys.env
 /android/app/google-services.json
 /ios/Runner/GoogleService-Info.plist
 /macos/Runner/GoogleService-Info.plist
 /lib/firebase_options.dart
 firebase.json
 /supabase/
+/web/firebase-messaging-sw.js
 
 # Flutter/Dart/Pub related
 **/doc/api/
