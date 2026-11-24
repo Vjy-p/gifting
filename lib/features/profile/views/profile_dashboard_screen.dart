@@ -102,7 +102,7 @@ class ProfileDashboardScreen extends StatelessWidget {
                             final isDark = ThemeController.to.isDarkMode;
                             return Switch.adaptive(
                               value: isDark,
-                              activeColor: AppColors.primary,
+                              activeTrackColor: AppColors.primary,
                               onChanged: (val) {
                                 ThemeController.to.toggleTheme();
                               },

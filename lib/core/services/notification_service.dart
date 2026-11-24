@@ -21,7 +21,9 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
-    log('[FCM Background] Received message: ${message.messageId}, data: ${message.data}');
+    log(
+      '[FCM Background] Received message: ${message.messageId}, data: ${message.data}',
+    );
   } catch (e) {
     log('[FCM Background] Error in background handler: $e');
   }
@@ -38,13 +40,13 @@ class NotificationService {
 
   static const AndroidNotificationChannel _orderChannel =
       AndroidNotificationChannel(
-    'order_updates',
-    'Order Updates',
-    description: 'Real-time order lifecycle status notifications',
-    importance: Importance.max,
-    playSound: true,
-    enableVibration: true,
-  );
+        'order_updates',
+        'Order Updates',
+        description: 'Real-time order lifecycle status notifications',
+        importance: Importance.max,
+        playSound: true,
+        enableVibration: true,
+      );
 
   static bool _initialized = false;
 
@@ -72,7 +74,9 @@ class NotificationService {
 
       // 5. Foreground FCM message listener
       FirebaseMessaging.onMessage.listen((RemoteMessage message) async {
-        log('[FCM Foreground] Title: ${message.notification?.title}, Body: ${message.notification?.body}');
+        log(
+          '[FCM Foreground] Title: ${message.notification?.title}, Body: ${message.notification?.body}',
+        );
         log('[FCM Foreground] Data: ${message.data}');
 
         final title =
@@ -100,7 +104,9 @@ class NotificationService {
 
         // 5b. Show elegant in-app floating banner if user is inside the app
         final inAppNotification = InAppNotificationModel(
-          id: message.messageId ?? DateTime.now().millisecondsSinceEpoch.toString(),
+          id:
+              message.messageId ??
+              DateTime.now().millisecondsSinceEpoch.toString(),
           orderId: orderId,
           orderNumber: orderNumber,
           status: status,
@@ -125,7 +131,9 @@ class NotificationService {
       // 7. App opened from terminated state via notification click
       final initialMessage = await _messaging.getInitialMessage();
       if (initialMessage != null) {
-        log('[FCM InitialMessage] Opened app from terminated: ${initialMessage.data}');
+        log(
+          '[FCM InitialMessage] Opened app from terminated: ${initialMessage.data}',
+        );
         _handleNotificationNavigation(initialMessage.data);
       }
 
@@ -158,7 +166,9 @@ class NotificationService {
   /// Sets up flutter_local_notifications plugins, channels, and click callbacks
   static Future<void> _initializeLocalNotifications() async {
     try {
-      const androidSettings = AndroidInitializationSettings('@mipmap/launcher_icon');
+      const androidSettings = AndroidInitializationSettings(
+        '@mipmap/launcher_icon',
+      );
       const darwinSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
@@ -179,13 +189,16 @@ class NotificationService {
       // Create notification channel on Android (required for Android 8.0+)
       final androidImplementation = _localNotifications
           .resolvePlatformSpecificImplementation<
-              AndroidFlutterLocalNotificationsPlugin>();
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       if (androidImplementation != null) {
         await androidImplementation.createNotificationChannel(_orderChannel);
       }
       log('[NotificationService] flutter_local_notifications initialized');
     } catch (e, stackTrace) {
-      log('[NotificationService] Error initializing flutter_local_notifications: $e $stackTrace');
+      log(
+        '[NotificationService] Error initializing flutter_local_notifications: $e $stackTrace',
+      );
     }
   }
 
@@ -244,7 +257,9 @@ class NotificationService {
   /// Callback when user taps a flutter_local_notifications notification
   static void _onNotificationTapped(NotificationResponse response) {
     try {
-      log('[NotificationService] Local notification response: ${response.payload}');
+      log(
+        '[NotificationService] Local notification response: ${response.payload}',
+      );
       if (response.payload != null && response.payload!.isNotEmpty) {
         final data = jsonDecode(response.payload!) as Map<String, dynamic>;
         _handleNotificationNavigation(data);
@@ -265,7 +280,9 @@ class NotificationService {
       sound: true,
       provisional: false,
     );
-    log('[FCM Permission] Authorization status: ${settings.authorizationStatus}');
+    log(
+      '[FCM Permission] Authorization status: ${settings.authorizationStatus}',
+    );
     return settings;
   }
 
@@ -362,9 +379,14 @@ class NotificationService {
       }
 
       // 4. Subscribe user to their personal topic for lifecycle push broadcasts
-      await _messaging.subscribeToTopic('user_$userId');
-      await _setCachedActiveToken(fcmToken);
-      log('[NotificationService] Active token ($fcmToken) saved & subscribed to topic user_$userId');
+      if (GetPlatform.isAndroid) {
+        await _messaging.subscribeToTopic('user_$userId');
+        await _setCachedActiveToken(fcmToken);
+      }
+
+      log(
+        '[NotificationService] Active token ($fcmToken) saved & subscribed to topic user_$userId',
+      );
     } catch (e, stackTrace) {
       log('[NotificationService] Error saving token for user: $e $stackTrace');
     }
@@ -398,13 +420,16 @@ class NotificationService {
 
       final subRef = profileRef.collection('fcm_tokens');
       await subRef.doc(tokenToRemove).delete().catchError((_) {});
-      final matches =
-          await subRef.where('token', isEqualTo: tokenToRemove).get();
+      final matches = await subRef
+          .where('token', isEqualTo: tokenToRemove)
+          .get();
       for (final doc in matches.docs) {
         await doc.reference.delete().catchError((_) {});
       }
 
-      log('[NotificationService] Removed expired token: $tokenToRemove for user $userId');
+      log(
+        '[NotificationService] Removed expired token: $tokenToRemove for user $userId',
+      );
     } catch (e) {
       log('[NotificationService] Error removing specific token: $e');
     }
@@ -416,13 +441,19 @@ class NotificationService {
       final activeToken = cachedActiveToken ?? await getToken();
 
       // 1. Delete fcm_token from profile document
-      await _firestore.collection('profiles').doc(userId).update({
-        'fcm_token': FieldValue.delete(),
-        'fcm_tokens': <String>[],
-        'fcm_token_updated_at': FieldValue.delete(),
-      }).catchError((e) {
-        log('[NotificationService] Profile document update error on logout: $e');
-      });
+      await _firestore
+          .collection('profiles')
+          .doc(userId)
+          .update({
+            'fcm_token': FieldValue.delete(),
+            'fcm_tokens': <String>[],
+            'fcm_token_updated_at': FieldValue.delete(),
+          })
+          .catchError((e) {
+            log(
+              '[NotificationService] Profile document update error on logout: $e',
+            );
+          });
 
       // 2. Remove all tokens from fcm_tokens subcollection
       final subSnap = await _firestore
@@ -446,7 +477,9 @@ class NotificationService {
 
       // 5. Clear cached token
       await _setCachedActiveToken(null);
-      log('[NotificationService] Active token removed on logout and invalidated');
+      log(
+        '[NotificationService] Active token removed on logout and invalidated',
+      );
     } catch (e) {
       log('[NotificationService] Error cleaning token on logout: $e');
     }
@@ -488,7 +521,9 @@ class NotificationService {
       final orderId = data['order_id']?.toString();
       final status = data['status']?.toString();
 
-      log('[NotificationService] Navigating for order: $orderId, status: $status');
+      log(
+        '[NotificationService] Navigating for order: $orderId, status: $status',
+      );
 
       // If specific order is targeted, go to live order tracking details
       if (orderId != null && orderId.isNotEmpty) {

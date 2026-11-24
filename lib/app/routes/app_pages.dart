@@ -96,7 +96,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.productDetails,
-      page: () => ProductDetailsScreen(),
+      page: () => const ProductDetailsScreen(),
       binding: BindingsBuilder(() {
         Get.lazyPut<ProductDetailsController>(
           () => ProductDetailsController(product: Get.arguments),

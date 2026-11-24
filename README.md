@@ -12,7 +12,6 @@ The project consists of three applications:
 
 ## 2. Technology Stack
 
-<<<<<<< HEAD
 | Technology        | Purpose                                                      |
 | ----------------- | ------------------------------------------------------------ |
 | Flutter & Dart    | Android application and responsive web interfaces            |
@@ -28,24 +27,6 @@ Flutter allows Android and web interfaces to share reusable components. GetX sim
 ## 3. How to Run
 
 Prerequisites: Flutter SDK, Dart SDK, Chrome and a configured Firebase project.
-=======
-| Technology        | Purpose                                                  |
-| ----------------- | -------------------------------------------------------- |
-| Flutter & Dart    | Android application and responsive web interfaces        |
-| GetX              | State management, dependency injection and navigation    |
-| Supabase          | Authentication, PostgreSQL database and backend services |
-| Hive              | Local storage for customer enquiry history               |
-| SharedPreferences | Local application preferences                            |
-| Firebase          | Push notification integration, where configured          |
-
-**Why this stack?**
-
-Flutter allows Android and web interfaces to share reusable components. GetX simplifies state management and navigation. Supabase provides authentication and database functionality without requiring a separate backend server. Hive provides local storage for enquiry history.
-
-## 3. How to Run
-
-Prerequisites: Flutter SDK, Dart SDK, Chrome and a configured Supabase project.
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
 ```bash
 # Install dependencies
@@ -67,15 +48,9 @@ flutter build apk --release
 flutter build web --release
 ```
 
-<<<<<<< HEAD
 Firebase is initialized using FlutterFire configuration in `lib/firebase_options.dart`.
 
 Never commit environment files containing sensitive credentials.
-=======
-Configure the Supabase URL and publishable/anon key using the project's environment configuration before running the applications.
-
-Never commit environment files containing real credentials or Supabase service-role keys.
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
 ## 4. Git and Deployment
 
@@ -83,7 +58,6 @@ Never commit environment files containing real credentials or Supabase service-r
 - Flutter Web is built using `flutter build web --release`.
 - The generated `build/web` directory is deployed using GitHub Pages and GitHub Actions.
 - GitHub Pages requires the correct repository base path (`/gifting/`).
-<<<<<<< HEAD
 - Firestore security rules should be configured according to your production requirements.
 
 ## 5. Incomplete Work and Known Limitations
@@ -91,15 +65,6 @@ Never commit environment files containing real credentials or Supabase service-r
 - Enquiry pagination should be moved to Firestore cursors/server-side queries for better performance with larger datasets.
 - Email and push notification delivery require production configuration and testing.
 - Firestore security rules and deployment secrets must be maintained securely.
-=======
-- Supabase authentication redirect URLs and database RLS policies must be configured for production.
-
-## 5. Incomplete Work and Known Limitations
-
-- Enquiry pagination should be moved to Supabase server-side queries for better performance with larger datasets.
-- Email and push notification delivery require production configuration and testing.
-- Supabase schema, RLS policies and deployment secrets must be maintained securely.
->>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
 
 ## 6. Improvements with More Time
 

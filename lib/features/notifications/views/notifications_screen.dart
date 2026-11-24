@@ -226,13 +226,15 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   ),
                 ),
                 const SizedBox(width: 14),
-
                 // Content
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
+                        spacing: 8,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
@@ -255,17 +257,19 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             ),
                           ),
                           if (notification.orderNumber.isNotEmpty) ...[
-                            const SizedBox(width: 8),
-                            Text(
-                              '#${notification.orderNumber}',
-                              style: TextStyle(
-                                fontSize: 11,
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.secondaryText,
+                            Expanded(
+                              child: Text(
+                                '#${notification.orderNumber}',
+                                // maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.secondaryText,
+                                ),
                               ),
                             ),
                           ],
-                          const Spacer(),
                           Text(
                             notification.relativeTime,
                             style: TextStyle(
