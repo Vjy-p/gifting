@@ -38,74 +38,74 @@ class ProductDetailsScreen extends StatelessWidget {
               ),
               elevation: 0,
               surfaceTintColor: Colors.transparent,
-            backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow
-                .withValues(alpha: 0.1),
-            flexibleSpace: ClipRect(
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
-                child: Container(
-                  color: Theme.of(context).colorScheme.surfaceContainerLow
-                      .withValues(alpha: 0.1),
+              backgroundColor: Theme.of(context).colorScheme.surfaceContainerLow
+                  .withValues(alpha: 0.1),
+              flexibleSpace: ClipRect(
+                child: BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 5, sigmaY: 5),
+                  child: Container(
+                    color: Theme.of(context).colorScheme.surfaceContainerLow
+                        .withValues(alpha: 0.1),
+                  ),
                 ),
               ),
+              title: const Text('Product Details'),
+              actions: [
+                Obx(() {
+                  final cartController = Get.isRegistered<CartController>()
+                      ? Get.find<CartController>()
+                      : Get.put(CartController());
+                  final count = cartController.cart.length;
+                  return Badge(
+                    isLabelVisible: count > 0,
+                    label: Text('$count'),
+                    child: IconButton(
+                      tooltip: 'Cart',
+                      icon: const Icon(Icons.shopping_bag_outlined),
+                      onPressed: () => Get.toNamed(AppRoutes.cart),
+                    ),
+                  );
+                }),
+                const ThemeToggleButton(),
+                const SizedBox(width: 8),
+              ],
             ),
-            title: const Text('Product Details'),
-            actions: [
-              Obx(() {
-                final cartController = Get.isRegistered<CartController>()
-                    ? Get.find<CartController>()
-                    : Get.put(CartController());
-                final count = cartController.cart.length;
-                return Badge(
-                  isLabelVisible: count > 0,
-                  label: Text('$count'),
-                  child: IconButton(
-                    tooltip: 'Cart',
-                    icon: const Icon(Icons.shopping_bag_outlined),
-                    onPressed: () => Get.toNamed(AppRoutes.cart),
+            body: LayoutBuilder(
+              builder: (context, constraints) {
+                final isMobile = constraints.maxWidth < 750;
+
+                return SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  padding: EdgeInsets.fromLTRB(
+                    isMobile ? 16 : 28,
+                    isMobile
+                        ? kToolbarHeight +
+                              MediaQuery.of(context).padding.top / 1.6
+                        : kToolbarHeight + 10,
+                    isMobile ? 16 : 28,
+                    isMobile ? 16 : 28,
+                  ),
+                  child: Center(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 1150),
+                      child: isMobile
+                          ? _buildMobileLayout(
+                              context: context,
+                              controller: controller,
+                            )
+                          : _buildDesktopLayout(
+                              context: context,
+                              controller: controller,
+                            ),
+                    ),
                   ),
                 );
-              }),
-              const ThemeToggleButton(),
-              const SizedBox(width: 8),
-            ],
+              },
+            ),
           ),
-          body: LayoutBuilder(
-            builder: (context, constraints) {
-              final isMobile = constraints.maxWidth < 750;
-
-              return SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                padding: EdgeInsets.fromLTRB(
-                  isMobile ? 16 : 28,
-                  isMobile
-                      ? kToolbarHeight +
-                            MediaQuery.of(context).padding.top / 1.6
-                      : kToolbarHeight + 10,
-                  isMobile ? 16 : 28,
-                  isMobile ? 16 : 28,
-                ),
-                child: Center(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxWidth: 1150),
-                    child: isMobile
-                        ? _buildMobileLayout(
-                            context: context,
-                            controller: controller,
-                          )
-                        : _buildDesktopLayout(
-                            context: context,
-                            controller: controller,
-                          ),
-                  ),
-                ),
-              );
-            },
-          ),
-        ),
-      );
-    },
-  );
+        );
+      },
+    );
   }
 
   Widget _buildMobileLayout({

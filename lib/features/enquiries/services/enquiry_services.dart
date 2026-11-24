@@ -7,20 +7,21 @@ import '../models/enquiry_model.dart';
 
 class EnquiryServices {
   EnquiryServices({FirebaseFirestore? firestore})
-      : _firestore = firestore ?? FirebaseFirestore.instance;
+    : _firestore = firestore ?? FirebaseFirestore.instance;
 
   final FirebaseFirestore _firestore;
 
   Future<String> submit(EnquiryModel enquiry) async {
     try {
-      final reference = (enquiry.referenceCode != null &&
-              enquiry.referenceCode!.isNotEmpty)
+      final reference =
+          (enquiry.referenceCode != null && enquiry.referenceCode!.isNotEmpty)
           ? enquiry.referenceCode!
           : 'TG-${DateTime.now().microsecondsSinceEpoch.toRadixString(36).toUpperCase()}';
 
       final data = enquiry.toJson();
       data['reference_code'] = reference;
-      data['created_at'] = (enquiry.createdAt ?? DateTime.now()).toIso8601String();
+      data['created_at'] = (enquiry.createdAt ?? DateTime.now())
+          .toIso8601String();
 
       await _firestore.collection('enquiries').doc(reference).set(data);
 
@@ -87,7 +88,8 @@ class EnquiryServices {
             final pId = item['id']?.toString() ?? '';
             final pName = item['name']?.toString() ?? '';
             final idMatches = product.id.isNotEmpty && pId == product.id;
-            final nameMatches = product.name.trim().isNotEmpty &&
+            final nameMatches =
+                product.name.trim().isNotEmpty &&
                 pName.trim().toLowerCase() == product.name.trim().toLowerCase();
             if (idMatches || nameMatches) {
               data['id'] = doc.id;

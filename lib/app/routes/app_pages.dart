@@ -61,6 +61,7 @@ class AppPages {
       page: () => const HomeScreen(),
       binding: BindingsBuilder(() {
         Get.lazyPut<AuthController>(() => AuthController());
+        Get.lazyPut<AuthController>(() => AuthController());
         Get.lazyPut<CatalogueController>(() => CatalogueController());
         Get.lazyPut<EnquiryController>(() => EnquiryController());
       }),
@@ -69,6 +70,7 @@ class AppPages {
       name: AppRoutes.enquiry,
       page: () => const EnquiryScreen(),
       binding: BindingsBuilder(() {
+        Get.lazyPut<AuthController>(() => AuthController());
         Get.lazyPut<AuthController>(() => AuthController());
         Get.lazyPut<CatalogueController>(() => CatalogueController());
         Get.lazyPut<EnquiryController>(() => EnquiryController());
@@ -94,7 +96,7 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.productDetails,
-      page: () => const ProductDetailsScreen(),
+      page: () => ProductDetailsScreen(),
       binding: BindingsBuilder(() {
         Get.lazyPut<ProductDetailsController>(
           () => ProductDetailsController(product: Get.arguments),
@@ -124,6 +126,8 @@ class AppPages {
         final args = Get.arguments == null
             ? null
             : Get.arguments as Map<String, dynamic>;
+        log('args $args');
+        Get.lazyPut<EnquiryController>(() => EnquiryController());
         log('args $args');
         Get.lazyPut<EnquiryController>(() => EnquiryController());
       }),

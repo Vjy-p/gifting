@@ -7,4 +7,10 @@ class Constants {
     'RAZORPAY_KEY',
     defaultValue: 'rzp_test_placeholder',
   );
+  static const String supbasePublishableKey = String.fromEnvironment(
+    'SUPABASE_PUBLISHABLE_KEY',
+  );
+  static const String supbaseAnonKey = String.fromEnvironment(
+    'SUPABASE_ANON_KEY',
+  );
 }

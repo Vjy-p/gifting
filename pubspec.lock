@@ -26,6 +26,17 @@ packages:
     source: hosted
     version: "6.4.1"
   ansicolor:
+<<<<<<< HEAD
+=======
+    dependency: transitive
+    description:
+      name: ansicolor
+      sha256: "50e982d500bc863e1d703448afdbf9e5a72eb48840a4f766fa361ffd6877055f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.3"
+  app_links:
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
     dependency: transitive
     description:
       name: ansicolor
@@ -40,6 +51,33 @@ packages:
       sha256: "0d58d1fa1fddf6588251ccf2819f3fb3b6d0452c1b2813ac7413a05592bfbefe"
       url: "https://pub.dev"
     source: hosted
+<<<<<<< HEAD
+=======
+    version: "1.0.4"
+  app_links_platform_interface:
+    dependency: transitive
+    description:
+      name: app_links_platform_interface
+      sha256: "7546f09a6e93f4a2df2fe2bd40a5c6c64310ac461b036d82b43033be7a59f809"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.4"
+  app_links_web:
+    dependency: transitive
+    description:
+      name: app_links_web
+      sha256: "382d32c6f486f15b1d7f5d6a37a70a481a4fc08382eef419d373169921a3e765"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.5"
+  archive:
+    dependency: transitive
+    description:
+      name: archive
+      sha256: "0d58d1fa1fddf6588251ccf2819f3fb3b6d0452c1b2813ac7413a05592bfbefe"
+      url: "https://pub.dev"
+    source: hosted
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
     version: "4.5.2"
   args:
     dependency: transitive
@@ -555,6 +593,7 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+<<<<<<< HEAD
   flutter_markdown_plus:
     dependency: "direct main"
     description:
@@ -563,6 +602,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.12"
+=======
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
   flutter_native_splash:
     dependency: "direct main"
     description:
@@ -571,6 +612,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.8"
+<<<<<<< HEAD
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -579,6 +621,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.35"
+=======
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
   flutter_shaders:
     dependency: transitive
     description:
@@ -709,6 +753,7 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.12.0"
+<<<<<<< HEAD
   image_picker:
     dependency: "direct main"
     description:
@@ -773,6 +818,8 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.2.2"
+=======
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
   intl:
     dependency: "direct main"
     description:
@@ -943,6 +990,17 @@ packages:
     version: "2.2.0"
   paginated_list:
     dependency: "direct main"
+<<<<<<< HEAD
+=======
+    description:
+      name: paginated_list
+      sha256: bc079d4c0cd83b63440a884c954ad79d8901f5628c22bf41f6c38acaac0c972f
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.2.3"
+  passkeys_platform_interface:
+    dependency: transitive
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
     description:
       name: paginated_list
       sha256: bc079d4c0cd83b63440a884c954ad79d8901f5628c22bf41f6c38acaac0c972f
@@ -1038,6 +1096,17 @@ packages:
     source: hosted
     version: "1.5.3"
   posix:
+<<<<<<< HEAD
+=======
+    dependency: transitive
+    description:
+      name: posix
+      sha256: "613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.5.4"
+  postgrest:
+>>>>>>> b182ad91d6b8a3a387484af6483491c78088248c
     dependency: transitive
     description:
       name: posix

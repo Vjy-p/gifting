@@ -60,7 +60,10 @@ class AuthController extends GetxController {
     } on FirebaseAuthException catch (error, stackTree) {
       isLoading.value = false;
       log('Error Signup $error, $stackTree ');
-      customToast(title: 'Signup failed', text: error.message ?? 'An error occurred during signup.');
+      customToast(
+        title: 'Signup failed',
+        text: error.message ?? 'An error occurred during signup.',
+      );
     } catch (e, stackTree) {
       log('Error signup $e, $stackTree');
       customToast(
@@ -93,7 +96,10 @@ class AuthController extends GetxController {
       }
     } on FirebaseAuthException catch (error, stackTree) {
       log('Error login $error, $stackTree ');
-      customToast(title: 'Login failed', text: error.message ?? 'An error occurred during sign in.');
+      customToast(
+        title: 'Login failed',
+        text: error.message ?? 'An error occurred during sign in.',
+      );
     } catch (_) {
       customToast(
         title: 'Unable to sign in',
